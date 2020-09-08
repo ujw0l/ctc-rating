@@ -72,7 +72,9 @@ Text Domain:  ctc-rating
         add_action( 'wp_enqueue_scripts', array($this,'ctcRatingEnequeCss' ));
         add_action('wp_ajax_ctcUserRating', array($this ,'ctcUserRating'));
         add_action('wp_ajax_nopriv_ctcUserRating', array($this ,'ctcUserRating'));
+        add_action( 'rest_api_init', array($this, 'registerRestEndpoints' ));
        add_shortcode('ctc_rating', array($this,'ctcDisplayRating'));
+      
 
     }
 
@@ -241,7 +243,39 @@ return ob_get_clean();
 		global $wpdb;
 		 $result = $wpdb->get_results('SELECT COUNT(*) FROM '.$wpdb->prefix.'ctcRating WHERE postId='.$postId.' AND '.$column.' RLIKE "~'.$userId.'~";',ARRAY_A);
 		 return $result[0]['COUNT(*)'];
-	}
+  }
+  
+
+  	/**
+	 * Register the routes for the objects of the controller.
+	 */
+	public function registerRestEndpoints() {
+
+    register_rest_route( 'ctc-rating/v1', '/ratings', array(
+			'methods' => WP_REST_Server::READABLE,
+			'callback' => function ( $request ) {
+        global $wpdb;
+                $sql = "SELECT * FROM {$wpdb->prefix}ctcRating";
+                $ratings   =  $wpdb->get_results($sql); 
+
+                for($i=0;$i<count($ratings);$i++):
+                  foreach($ratings[$i] as $key=>$value):
+                    switch($key):
+                     case 'thumbsUpUser':
+                      $restData[$i][$key] = str_replace('~','',$value);
+                     break;
+                     case 'thumbsDownUser':
+                      $restData[$i][$key] = str_replace('~','',$value);
+                     break;
+                     default:
+                     $restData[$i][$key] = $value;
+                    endswitch;
+                  endforeach;  
+              endfor;
+                   return new WP_REST_Response( $restData, 200 );
+               }
+        ) );
+  }
 
  }
 

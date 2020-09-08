@@ -2,7 +2,7 @@
 /*
  Plugin Name:CTC Rating
  Plugin URI:
- Description: Like and dislike rating for WordPress post
+ Description: Thumb up and thumb down  rating for WordPress post
  Version: 1.0.0
  Author: Ujwol Bastakoti
  Author URI:https://ujwolbastakoti.wordpress.com/
@@ -74,6 +74,7 @@ Text Domain:  ctc-rating
         add_action('wp_ajax_nopriv_ctcUserRating', array($this ,'ctcUserRating'));
         add_action( 'rest_api_init', array($this, 'registerRestEndpoints' ));
        add_shortcode('ctc_rating', array($this,'ctcDisplayRating'));
+       add_action( 'init', array($this,'ctcRatingGutenbergBlocks' ));
       
 
     }
@@ -99,6 +100,22 @@ Text Domain:  ctc-rating
   public function ctcRatingEnequeCss(){
     wp_enqueue_style( 'ctcRatingFrontendCss', CR_DIR_PATH.'css/ctc_rating.css'); 
     wp_enqueue_style( 'dashicons' );  
+   }
+
+
+   public function ctcRatingGutenbergBlocks(){
+// Block Editor Script.
+wp_register_script(
+  'ctcRatingBlockJs',
+  CR_DIR_PATH.'js/ctc_rating_block.js',
+  array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
+);
+register_block_type(
+  'ctc-rating/add-ctc-rating',
+  array(
+     'editor_script' => 'ctcRatingBlockJs',
+  )
+);
    }
 
    /*
@@ -128,6 +145,8 @@ Text Domain:  ctc-rating
    
       $thumbUpClass =  false === strpos($rating['thumbsUpUser'],$needle)?'':'ctcUserThumbUp';
       $thumbDownClass=  false === strpos($rating['thumbsDownUser'],$needle) ? '':'ctcUserThumbDown' ;
+      $thumUpCount = empty($rating['thumbsUpCount'])? 0 : $rating['thumbsUpCount'];
+      $thumbDownCount = empty($rating['thumbsDownCount']) ? 0 : $rating['thumbsDownCount'];
 
         ob_start();
     ?>
@@ -137,8 +156,8 @@ Text Domain:  ctc-rating
           				  endif;
           	?>	
     				<span id="ctcThumbUp-<?=get_the_ID()?>"  title="<?=$thumbUpTitle??__('Thumbs Up','ctc-rating')?>"  data-type-scenario="<?=$scenario?>" data-type-id="<?=get_the_ID()?>" data-type-rating="1" class=" ctcRating<?=$rating['postId']?>-1   dashicons dashicons-thumbs-up ctcThumbUp <?= $thumbUpClass ??'' ?>"></span>
-    				<span id="ctcThumbUpCount-<?=get_the_ID()?>" class="ctcThumbsUpStat ctcThumbsUpCount-<?=$scenario.'-'.$rating['postId']?>" data-type-thumupcount="<?=$rating['thumbsUpCount']?>"> <?=number_format($rating['thumbsUpCount'])?></span>
-    				<span id="ctcThumbDownCount-<?=get_the_ID()?>" class="ctcThumbsDownStat ctcThumbsDownCount-<?=$scenario.'-'.$rating['postId']?>" data-type-thumdowncount="<?=$rating['thumbsDownCount']?>" > <?=number_format($rating['thumbsDownCount'])?></span>
+    				<span id="ctcThumbUpCount-<?=get_the_ID()?>" class="ctcThumbsUpStat ctcThumbsUpCount-<?=$scenario.'-'.$rating['postId']?>" data-type-thumupcount="<?=$thumUpCount?>"> <?=number_format($rating['thumbsUpCount'])?></span>
+    				<span id="ctcThumbDownCount-<?=get_the_ID()?>" class="ctcThumbsDownStat ctcThumbsDownCount-<?=$scenario.'-'.$rating['postId']?>" data-type-thumdowncount="<?=$thumbDownCount?>" > <?=number_format($rating['thumbsDownCount'])?></span>
           			
           	<?php if(!empty($thumbDownClass)):
           				$thumbDownTitle=__("You already thumbed down this post",'ctc-rating');

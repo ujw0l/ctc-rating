@@ -46,26 +46,25 @@ window.addEventListener('load', () => {
                 ctcCalcUpDown(productId, 'thumbsDown', scenario);
                 break;
             case 'thumbsUpReversed':
-                clickedEl.title = ctcRating.thumbUp
-                clickedEl.classList.remove('ctcThumbDown');
+                clickedEl.title = ctcRating.alreadyThumbedDown
                 clickedEl.classList.add('ctcUserThumbDown');
                 clickedEl.style.fontSize = '25px';
 
                 otherRating = document.querySelector('#ctcThumbUp-' + productId);
-                otherRating.title = ctcRating.alreadyThumbedDown;
+                otherRating.title = ctcRating.thumbUp
                 otherRating.classList.remove('ctcUserThumbUp')
                 otherRating.classList.add('ctcThumbUp')
                 otherRating.style.fontSize = '20px';
                 ctcCalcUpDown(productId, 'thumbsUpReversed', scenario);
                 break;
             case 'thumbsDownReversed':
-                clickedEl.title = ctcRating.thumbDown;
+                clickedEl.title = ctcRating.alreadyThumbedUp;
                 clickedEl.classList.remove('ctcThumbUp');
                 clickedEl.classList.add('ctcUserThumbUp');
                 clickedEl.style.fontSize = '25px';
 
                 otherRating = document.querySelector('#ctcThumbDown-' + productId);
-                otherRating.title = ctcRating.alreadyThumbedUp;
+                otherRating.title = ctcRating.thumbDown;
                 otherRating.classList.remove('ctcUserThumbDown');
                 otherRating.classList.add('ctcThumbDown');
                 otherRating.style.fontSize = '20px';

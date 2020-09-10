@@ -13,7 +13,6 @@ window.addEventListener('load', () => {
         xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
         xhttp.addEventListener('load', e => {
             if (event.target.status >= 200 && event.target.status < 400) {
-                console.log(e.target.response);
                 if ('notLoggedIn' == e.target.response) {
                     alert(ctcRating.notLoggedIn);
                 } else {

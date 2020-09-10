@@ -9,16 +9,16 @@
 Text Domain:  ctc-rating
  License: GPLv2
  */
-
+namespace ctcRating;
  class ctcRating{
 
     public function __construct(){
 
-        define('CR_DIR_PATH',plugin_dir_url(__FILE__) );
+        define('CTCR_DIR_PATH',plugin_dir_url(__FILE__) );
         self::ctcRatingADU();
         self::ctcRatingAddActionsShortCode();   
     }
-/*
+/** 
 * Plugin activation, deactivation and uninstall
 */
    public function ctcRatingADU(){   
@@ -27,7 +27,7 @@ Text Domain:  ctc-rating
     register_uninstall_hook(__FILE__,array($this,'ctcRatingUninstall'));
     }
 
-    /*
+    /** 
     *create table on activation
     */
 
@@ -44,7 +44,7 @@ Text Domain:  ctc-rating
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($sql);
     }
-    /*
+    /** 
     * Do nothing on deactivation
     */
 
@@ -54,7 +54,7 @@ Text Domain:  ctc-rating
     }
 
 
-/*
+/** 
 *Drop table on uninstall
 */
     public function ctcRatingUninstall(){
@@ -62,7 +62,7 @@ Text Domain:  ctc-rating
         $wpdb->query("DROP TABLES {$wpdb->prefix}ctcRating;");
     }
 
-    /*
+    /** 
     *Add required actions and add shortcode
     */
 
@@ -79,11 +79,11 @@ Text Domain:  ctc-rating
 
     }
 
-    /*
+    /** 
     * Eneque frontend scripts
     */
   public function ctcRatingEnequeJS(){
-   wp_enqueue_script('ctcRatingFrontendlJs', CR_DIR_PATH.'js/ctc_rating.js', array());
+   wp_enqueue_script('ctcRatingFrontendlJs', CTCR_DIR_PATH.'js/ctc_rating.js', array());
    wp_localize_script( 'ctcRatingFrontendlJs', 'ctcRating ', array(
                                                                     'ctcRatingAjaxUrl' =>admin_url( 'admin-ajax.php' ),
                                                                     'notLoggedIn' => __('You need to log in to rate this post.','ctc-rating'),
@@ -94,11 +94,11 @@ Text Domain:  ctc-rating
                                                                     ));
   }
 
-  /*
+  /** 
     * Eneque frontend styles
     */
   public function ctcRatingEnequeCss(){
-    wp_enqueue_style( 'ctcRatingFrontendCss', CR_DIR_PATH.'css/ctc_rating.css'); 
+    wp_enqueue_style( 'ctcRatingFrontendCss', CTCR_DIR_PATH.'css/ctc_rating.css'); 
     wp_enqueue_style( 'dashicons' );  
    }
 
@@ -107,7 +107,7 @@ Text Domain:  ctc-rating
 // Block Editor Script.
 wp_register_script(
   'ctcRatingBlockJs',
-  CR_DIR_PATH.'js/ctc_rating_block.js',
+  CTCR_DIR_PATH.'js/ctc_rating_block.js',
   array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
 );
 register_block_type(
@@ -118,19 +118,20 @@ register_block_type(
 );
    }
 
-   /*
+   /** 
    * ajax function to handle thumb up and thumb down 
    */
    public function ctcUserRating(){
 
     $ratingData = json_decode(stripslashes($_POST['rating_data']),TRUE);
-
-     $this->ctcProcessUserRating($ratingData['postId'],$ratingData['ratingType']);
+    if(is_numeric($ratingData['postId']) && is_numeric($ratingData['ratingType'])):
+        $this->ctcProcessUserRating($ratingData['postId'],$ratingData['ratingType']);
+    endif;
    
     wp_die();
    }
 
-   /*
+   /** 
    *Display rating on frontend
    */
 
@@ -139,31 +140,32 @@ register_block_type(
 
     $needle = '~'.get_current_user_id().'~';
     $scenario  = 'ctcPostPage'; 
-     	
-   $rating = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}ctcRating WHERE postId=".get_the_ID(),ARRAY_A);
+       
+    $prpSql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}ctcRating WHERE postId=%d",get_the_ID());
+   $rating = $wpdb->get_row($prpSql,ARRAY_A);
 
    
-      $thumbUpClass =  false === strpos($rating['thumbsUpUser'],$needle)?'':'ctcUserThumbUp';
-      $thumbDownClass=  false === strpos($rating['thumbsDownUser'],$needle) ? '':'ctcUserThumbDown' ;
-      $thumUpCount = empty($rating['thumbsUpCount'])? 0 : $rating['thumbsUpCount'];
-      $thumbDownCount = empty($rating['thumbsDownCount']) ? 0 : $rating['thumbsDownCount'];
+      $thumbUpClass =  false === strpos($rating['thumbsUpUser'],$needle)?'':esc_attr('ctcUserThumbUp');
+      $thumbDownClass=  false === strpos($rating['thumbsDownUser'],$needle) ? '':esc_attr( 'ctcUserThumbDown') ;
+      $thumUpCount = empty($rating['thumbsUpCount'])? 0 : esc_html($rating['thumbsUpCount']);
+      $thumbDownCount = empty($rating['thumbsDownCount']) ? 0 : esc_html($rating['thumbsDownCount']);
 
         ob_start();
     ?>
     <div  class="ctcItemRating">
     				<?php if(!empty($thumbUpClass)):
-          					$thumbUpTitle=__("You already thumbed up this post",'ctc-rating');
+          					$thumbUpTitle=__(esc_attr( "You already thumbed up this post"),'ctc-rating');
           				  endif;
           	?>	
-    				<span id="ctcThumbUp-<?=get_the_ID()?>"  title="<?=$thumbUpTitle??__('Thumbs Up','ctc-rating')?>"  data-type-scenario="<?=$scenario?>" data-type-id="<?=get_the_ID()?>" data-type-rating="1" class=" ctcRating<?=$rating['postId']?>-1   dashicons dashicons-thumbs-up ctcThumbUp <?= $thumbUpClass ??'' ?>"></span>
-    				<span id="ctcThumbUpCount-<?=get_the_ID()?>" class="ctcThumbsUpStat ctcThumbsUpCount-<?=$scenario.'-'.$rating['postId']?>" data-type-thumupcount="<?=$thumUpCount?>"> <?=number_format($rating['thumbsUpCount'])?></span>
-    				<span id="ctcThumbDownCount-<?=get_the_ID()?>" class="ctcThumbsDownStat ctcThumbsDownCount-<?=$scenario.'-'.$rating['postId']?>" data-type-thumdowncount="<?=$thumbDownCount?>" > <?=number_format($rating['thumbsDownCount'])?></span>
+    				<span id="ctcThumbUp-<?=esc_attr( get_the_ID())?>"  title="<?=$thumbUpTitle??__(esc_attr( 'Thumbs Up'),'ctc-rating')?>"  data-type-scenario="<?=esc_attr($scenario)?>" data-type-id="<?=get_the_ID()?>" data-type-rating="1" class=" ctcRating<?=esc_attr($rating['postId'])?>-1   dashicons dashicons-thumbs-up ctcThumbUp <?=$thumbUpClass ??'' ?>"></span>
+    				<span id="ctcThumbUpCount-<?=esc_attr( get_the_ID())?>" class="ctcThumbsUpStat ctcThumbsUpCount-<?=esc_attr( $scenario).'-'.esc_attr( $rating['postId'])?>" data-type-thumupcount="<?=esc_attr( $thumUpCount)?>"> <?=esc_html( number_format($rating['thumbsUpCount']))?></span>
+    				<span id="ctcThumbDownCount-<?=esc_attr( get_the_ID())?>" class="ctcThumbsDownStat ctcThumbsDownCount-<?=esc_attr( $scenario).'-'.esc_attr( $rating['postId'])?>" data-type-thumdowncount="<?=esc_attr( $thumbDownCount)?>" > <?=esc_html( number_format($rating['thumbsDownCount']))?></span>
           			
           	<?php if(!empty($thumbDownClass)):
-          				$thumbDownTitle=__("You already thumbed down this post",'ctc-rating');
+          				$thumbDownTitle=__(esc_attr( "You already thumbed down this post"),'ctc-rating');
           				endif;
           	?>
-          			<span id="ctcThumbDown-<?=get_the_ID()?>"  title="<?=$thumbDownTitle??__('Thumbs Down','ctc-rating')?>"  data-type-scenario="<?=$scenario?>" data-type-id="<?=get_the_ID()?>"  data-type-rating="2" class="ctcRating<?=$rating['postId']?>-2   dashicons dashicons-thumbs-down  ctcThumbDown <?=$thumbDownClass ??''?> "></span>
+          			<span id="ctcThumbDown-<?=get_the_ID()?>"  title="<?=$thumbDownTitle??__(esc_attr('Thumbs Down'),'ctc-rating')?>"  data-type-scenario="<?=esc_attr($scenario)?>" data-type-id="<?=esc_attr( get_the_ID())?>"  data-type-rating="2" class="ctcRating<?=esc_attr($rating['postId'])?>-2   dashicons dashicons-thumbs-down  ctcThumbDown <?=$thumbDownClass ??''?> "></span>
      </div>	
 
 <?php
@@ -194,34 +196,33 @@ return ob_get_clean();
 			  if($rating === '1'):
 
 			  if($this->ctcCheckIfUserRatedProduct($postId,$userId, 'thumbsUpUser') === '1'):
-			  		 $sql = "UPDATE {$wpdb->prefix}ctcRating SET thumbsUpCount = thumbsUpCount-1 , thumbsUpUser= REPLACE(thumbsUpUser,'~{$userId}~,','') WHERE postId={$postId}";
-			       $wpdb->query($sql);
+			  		 $prpsql = $wpdb->prepare("UPDATE {$wpdb->prefix}ctcRating SET thumbsUpCount = thumbsUpCount-1 , thumbsUpUser= REPLACE(thumbsUpUser,'~%d~,','') WHERE postId=%d",$userId,$postId);
+			       $wpdb->query($prpsql);
 			  		  echo "unThumbsUp";
 			  else:
                if ($this->ctcPostThumbUpThumbDownReversal('thumbsDownUser',$postId,$userId)==='1'):
-                $sql = "UPDATE {$wpdb->prefix}ctcRating SET thumbsDownCount = thumbsDownCount-1 ,thumbsUpCount = thumbsUpCount+1, thumbsDownUser = REPLACE(thumbsDownUser,'~{$userId}~,',''), thumbsUpUser= CONCAT(thumbsUpUser,'~{$userId}~,') WHERE postId={$postId}";
-				  		   $wpdb->query($sql);
+                $prpsql= $wpdb->prepare("UPDATE {$wpdb->prefix}ctcRating SET thumbsDownCount = thumbsDownCount-1 ,thumbsUpCount = thumbsUpCount+1, thumbsDownUser = REPLACE(thumbsDownUser,'~%d~,',''), thumbsUpUser= CONCAT(thumbsUpUser,'~%d~,') WHERE postId=%d",$userId,$userId,$postId);
+                $wpdb->query($prpsql);
 				  		  echo "thumbsDownReversed";
                else:
-                $sql = "INSERT INTO {$wpdb->prefix}ctcRating (postId,thumbsUpCount,thumbsUpUser) VALUES ('{$postId}','1','~$userId~,') ON DUPLICATE KEY UPDATE  thumbsUpCount = thumbsUpCount+1 , thumbsUpUser= CONCAT(thumbsUpUser,'~{$userId}~,')";
-                $result = $wpdb->query($sql);
+                $prpSql = $wpdb->prepare("INSERT INTO {$wpdb->prefix}ctcRating (postId,thumbsUpCount,thumbsUpUser) VALUES ('%d','1','~%d~,') ON DUPLICATE KEY UPDATE  thumbsUpCount = thumbsUpCount+1 , thumbsUpUser= CONCAT(thumbsUpUser,'~%d~,')",$postId,$userId,$userId );
+                $result = $wpdb->query($prpSql);
                     echo "thumbsUp";
 				  		  endif; 
 			  endif;
 			  elseif ($rating === '2'):
             if($this->ctcCheckIfUserRatedProduct($postId, $userId,'thumbsDownUser') == '1'):
-              $sql = "UPDATE {$wpdb->prefix}ctcRating SET thumbsDownCount = thumbsDownCount-1 , thumbsDownUser = REPLACE(thumbsDownUser,'~{$userId}~,','') WHERE postId={$postId}";
-				      $wpdb->query($sql);
+              $prpSql = $wpdb->prepare("UPDATE {$wpdb->prefix}ctcRating SET thumbsDownCount = thumbsDownCount-1 , thumbsDownUser = REPLACE(thumbsDownUser,'~%d~,','') WHERE postId=%d",$userId,$postId);
+              $wpdb->query( $prpSql);
 				       echo "unThumbsDown";
 				    else:
-				   
                 if ($this->ctcPostThumbUpThumbDownReversal('thumbsUpUser',$postId,$userId)==='1'):
-                  $sql = "UPDATE {$wpdb->prefix}ctcRating SET thumbsUpCount = thumbsUpCount-1 ,thumbsDownCount = thumbsDownCount+1, thumbsUpUser = REPLACE(thumbsUpUser,'~{$userId}~,',''), thumbsDownUser= CONCAT(thumbsDownUser,'~{$userId}~,') WHERE postId={$postId}";
-					        $wpdb->query($sql);
+                  $prpSql = $wpdb->prepare("UPDATE {$wpdb->prefix}ctcRating SET thumbsUpCount = thumbsUpCount-1 ,thumbsDownCount = thumbsDownCount+1, thumbsUpUser = REPLACE(thumbsUpUser,'~%d~,',''), thumbsDownUser= CONCAT(thumbsDownUser,'~%d~,') WHERE postId=%d",$userId,$userId,$postId);
+					        $wpdb->query($prpSql);
 					       echo "thumbsUpReversed";
                else:
-                 $sql = "INSERT INTO {$wpdb->prefix}ctcRating (postId,thumbsDownCount,thumbsDownUser) VALUES ('{$postId}','1','~$userId~,') ON DUPLICATE KEY UPDATE  thumbsDownCount = thumbsDownCount+1 , thumbsDownUser= CONCAT(thumbsDownUser,'~{$userId}~,')";
-					       $wpdb->query($sql);
+                 $prpSql = $wpdb->prepare("INSERT INTO {$wpdb->prefix}ctcRating (postId,thumbsDownCount,thumbsDownUser) VALUES ('%d','1','~%d~,') ON DUPLICATE KEY UPDATE  thumbsDownCount = thumbsDownCount+1 , thumbsDownUser= CONCAT(thumbsDownUser,'~%d~,')",$postId,$userId,$userId);
+					       $wpdb->query($prpSql);
 					        echo "thumbsDown";
 				         endif;
 				  endif;  
@@ -232,7 +233,7 @@ return ob_get_clean();
 		
   }
 
-  /*
+  /** 
   *Rating reversal
   *@param $reverseColumnName Column name of rating revarsal
   *@param $postId Post id for reversal 
@@ -241,15 +242,13 @@ return ob_get_clean();
   *@return Result of reversal
   */
   public function ctcPostThumbUpThumbDownReversal($reverseColumnName,$postId,$userId){
-		global $wpdb;
-		
-		$result = $wpdb->get_results('SELECT COUNT(*) FROM '.$wpdb->prefix.'ctcRating WHERE postId='.$postId.' AND '.$reverseColumnName.' RLIKE "~'.$userId.'~";',ARRAY_A);
-     
+    global $wpdb;
+    $result = $wpdb->get_results('SELECT COUNT(*) FROM '.$wpdb->prefix.'ctcRating WHERE postId='.$postId.' AND '.$reverseColumnName.' RLIKE "~'.$userId.'~";',ARRAY_A);
 		return $result[0]['COUNT(*)'];
 		
   }
   
- /*
+ /** 
   *Check if user rated post before
   *
   *@param $postId Post id for reversal 

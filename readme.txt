@@ -7,7 +7,7 @@ Requires PHP: 5.0.0
 Stable tag: 1.0.0
 License: GPL V2
 
-Plugin lets user to add rating ability to post through thumb up and thumb down
+Plugin lets user to add rating ability to post through thumb up and thumb down and display count of total thumbed or total thumbed down.
 
 == Description ==
 This plugin lets user to add rating functionalities to the post so user can thumb up or thumb down a post if logged in.

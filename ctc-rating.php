@@ -101,7 +101,9 @@ namespace ctcRating;
     wp_enqueue_style( 'dashicons' );  
    }
 
-
+/**
+ * Rgister block editor scripts
+ */
    public function ctcRatingGutenbergBlocks(){
 // Block Editor Script.
 wp_register_script(
@@ -124,7 +126,7 @@ register_block_type(
 
     $ratingData = json_decode(stripslashes($_POST['rating_data']),TRUE);
     if(is_numeric($ratingData['postId']) && is_numeric($ratingData['ratingType'])):
-        $this->ctcProcessUserRating($ratingData['postId'],$ratingData['ratingType']);
+        $this->ctcProcessUserRating(absint($ratingData['postId']),$ratingData['ratingType']);
     endif;
    
     wp_die();

@@ -126,7 +126,7 @@ register_block_type(
 
     $ratingData = json_decode(stripslashes($_POST['rating_data']),TRUE);
     if(is_numeric($ratingData['postId']) && is_numeric($ratingData['ratingType'])):
-        $this->ctcProcessUserRating(absint($ratingData['postId']),$ratingData['ratingType']);
+        $this->ctcProcessUserRating(absint($ratingData['postId']),absint($ratingData['ratingType']));
     endif;
    
     wp_die();
@@ -194,7 +194,7 @@ return ob_get_clean();
     if(is_user_logged_in()):
       
      
-			  if($rating === '1'):
+			  if($rating === 1):
 
 			  if($this->ctcCheckIfUserRatedProduct($postId,$userId, 'thumbsUpUser') === '1'):
 			  		 $prpsql = $wpdb->prepare("UPDATE {$wpdb->prefix}ctcRating SET thumbsUpCount = thumbsUpCount-1 , thumbsUpUser= REPLACE(thumbsUpUser,'~%d~,','') WHERE postId=%d",$userId,$postId);
@@ -211,7 +211,7 @@ return ob_get_clean();
                     echo "thumbsUp";
 				  		  endif; 
 			  endif;
-			  elseif ($rating === '2'):
+			  elseif ($rating === 2):
             if($this->ctcCheckIfUserRatedProduct($postId, $userId,'thumbsDownUser') == '1'):
               $prpSql = $wpdb->prepare("UPDATE {$wpdb->prefix}ctcRating SET thumbsDownCount = thumbsDownCount-1 , thumbsDownUser = REPLACE(thumbsDownUser,'~%d~,','') WHERE postId=%d",$userId,$postId);
               $wpdb->query( $prpSql);

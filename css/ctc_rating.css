@@ -203,6 +203,7 @@
     height:25px;
     font-family:sans-serif;
     line-height: 1.8;
+    cursor:pointer;
 }
 
 
@@ -257,4 +258,31 @@
    cursor:pointer;
     
   
+   }
+
+  .rating-users-list{
+    margin:2px;
+
+  }
+
+   .ctc-rating-users{
+     margin:2px;
+     text-align: left;
+     list-style: none;
+    
+   }
+   .ctc-rating-users:before{
+    font-family: dashicons;
+    content: "\f110";
+    border:2px solid rgba(255,255,255,1);
+   }
+   
+   .ctc-liked-by,
+   .ctc-disliked-by{
+     background-color: rgba(0,0,0,1);
+     color:rgba(255,255,255,1);
+     width:100%;
+     position: -webkit-sticky; /* Safari */
+     position: sticky;
+     top: 0;
    }

@@ -3,7 +3,7 @@
  Plugin Name:CTC Rating
  Plugin URI:https://github.com/ujw0l/ctc-rating
  Description: Thumb up and thumb down  rating for WordPress post
- Version: 1.0.0
+ Version: 1.1.0
  Author: Ujwol Bastakoti
  Author URI:https://ujw0l.github.io/
 Text Domain:  ctc-rating
@@ -72,6 +72,10 @@ namespace ctcRating;
         add_action( 'wp_enqueue_scripts', array($this,'ctcRatingEnequeCss' ));
         add_action('wp_ajax_ctcUserRating', array($this ,'ctcUserRating'));
         add_action('wp_ajax_nopriv_ctcUserRating', array($this ,'ctcUserRating'));
+        add_action('wp_ajax_ctcGetUsers', array($this ,'ctcGetUsers'));
+        add_action('wp_ajax_nopriv_ctcGetUsers', array($this ,'ctcGetUsers'));
+
+        
        add_shortcode('ctc_rating', array($this,'ctcDisplayRating'));
        add_action( 'init', array($this,'ctcRatingGutenbergBlocks' ));
       
@@ -82,7 +86,8 @@ namespace ctcRating;
     * Eneque frontend scripts
     */
   public function ctcRatingEnequeJS(){
-   wp_enqueue_script('ctcRatingFrontendlJs', CTCR_DIR_PATH.'js/ctc_rating.js', array());
+   wp_enqueue_script('jsOverlay', CTCR_DIR_PATH.'js/js-overlay.js', array());
+   wp_enqueue_script('ctcRatingFrontendlJs', CTCR_DIR_PATH.'js/ctc_rating.js', array('jsOverlay'));
    wp_localize_script( 'ctcRatingFrontendlJs', 'ctcRating ', array(
                                                                     'ctcRatingAjaxUrl' =>admin_url( 'admin-ajax.php' ),
                                                                     'notLoggedIn' => __('You need to log in to rate this post.','ctc-rating'),
@@ -159,8 +164,8 @@ register_block_type(
           				  endif;
           	?>	
     				<span id="ctcThumbUp-<?=esc_attr( get_the_ID())?>"  title="<?=$thumbUpTitle??__(esc_attr( 'Thumbs Up'),'ctc-rating')?>"  data-type-scenario="<?=esc_attr($scenario)?>" data-type-id="<?=get_the_ID()?>" data-type-rating="1" class=" ctcRating<?=esc_attr($rating['postId'])?>-1   dashicons dashicons-thumbs-up ctcThumbUp <?=$thumbUpClass ??'' ?>"></span>
-    				<span id="ctcThumbUpCount-<?=esc_attr( get_the_ID())?>" class="ctcThumbsUpStat ctcThumbsUpCount-<?=esc_attr( $scenario).'-'.esc_attr( $rating['postId'])?>" data-type-thumupcount="<?=esc_attr( $thumUpCount)?>"> <?=esc_html( number_format($rating['thumbsUpCount']))?></span>
-    				<span id="ctcThumbDownCount-<?=esc_attr( get_the_ID())?>" class="ctcThumbsDownStat ctcThumbsDownCount-<?=esc_attr( $scenario).'-'.esc_attr( $rating['postId'])?>" data-type-thumdowncount="<?=esc_attr( $thumbDownCount)?>" > <?=esc_html( number_format($rating['thumbsDownCount']))?></span>
+    				<span id="ctcThumbUpCount-<?=esc_attr( get_the_ID())?>" data-get="thumb-up-count" data-post-id="<?=esc_attr( get_the_ID())?>" class="ctcThumbsUpStat ctcThumbsUpCount-<?=esc_attr( $scenario).'-'.esc_attr( $rating['postId'])?>" data-type-thumupcount="<?=esc_attr( $thumUpCount)?>"> <?=esc_html( number_format($rating['thumbsUpCount']))?></span>
+    				<span id="ctcThumbDownCount-<?=esc_attr( get_the_ID())?>" data-get="thumb-down-count" data-post-id="<?=esc_attr( get_the_ID())?>" class="ctcThumbsDownStat ctcThumbsDownCount-<?=esc_attr( $scenario).'-'.esc_attr( $rating['postId'])?>" data-type-thumdowncount="<?=esc_attr( $thumbDownCount)?>" > <?=esc_html( number_format($rating['thumbsDownCount']))?></span>
           			
           	<?php if(!empty($thumbDownClass)):
           				$thumbDownTitle=__(esc_attr( "You already thumbed down this post"),'ctc-rating');
@@ -183,6 +188,7 @@ return ob_get_clean();
  * function to handles user rating
  * @param $postId Post Id
  * @param $rating Rating cliked by user
+ * @return echo action
  * 
  */	
 	public function ctcProcessUserRating($postId,$rating){
@@ -265,7 +271,33 @@ return ob_get_clean();
   }
   
 
-  
+  /**
+   * Handle display user based on rating
+   * 
+   */
+  public function ctcGetUsers(){
+
+if(is_numeric($_POST['post_id'])):
+  global $wpdb;
+
+  $columnToQuery = 'thumb-up-count' == $_POST['user_to_get'] ? 'thumbsUpUser' :  'thumbsDownUser';
+  $displayUsers = 'thumb-up-count' == $_POST['user_to_get'] ? '<p class="ctc-liked-by">'.__('Thumbs-up by','ctc-rating').'</p>' : '<p class="ctc-disliked-by">'.__('Thumbs-down by' ,'ctc-user').'</p>';
+$prepSql = $wpdb->prepare("SELECT {$columnToQuery} FROM {$wpdb->prefix}ctcRating WHERE postId=%d",absint($_POST['post_id']));
+$userIds = explode(',',str_replace('~','',$wpdb->get_results($prepSql, ARRAY_N )[0][0]));
+
+for($i=0; $i< count($userIds)-1;$i++):
+
+  $userData =  get_user_by('ID',$userIds[$i]);
+  $displayUsers .="<li class='ctc-rating-users'>".ucfirst($userData->data->user_nicename)."</li>";
+ 
+endfor;
+endif;
+$displayUsers .='</ul>';
+echo $displayUsers;
+wp_die();
+  }
+
+
 
  }
 

@@ -1,10 +1,10 @@
 === CTC Rating ===
 Contributors: UjW0L
-Tags: Rating, thumb up, thumb down,like, dislike
+Tags: block,Rating, thumb up, thumb down,like, dislike
 Requires at least: 5.0.0
-Tested up to: 5.5.1
+Tested up to: 5.7.2
 Requires PHP: 5.0.0
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPL V2
 
 Plugin lets user to add rating ability to post through thumb up and thumb down and display count of total thumbed or total thumbed down. As well
@@ -31,3 +31,7 @@ Download plugin from plugin section of WordPress and activate it.
 ### 1.1.0 ###
 
 * Display users who thumbed up/down on modal window
+
+### 1.1.1 ###
+
+* Minor bug fixes

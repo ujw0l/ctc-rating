@@ -57,10 +57,10 @@ namespace ctcRating;
 /** 
 *Drop table on uninstall
 */
-    public function ctcRatingUninstall(){
-        global $wpdb;
-        $wpdb->query("DROP TABLES {$wpdb->prefix}ctcRating;");
-    }
+public function ctcRatingUninstall(){
+  global $wpdb;
+  $wpdb->query("DROP TABLES {$wpdb->prefix}ctcRating;");
+}
 
     /** 
     *Add required actions and add shortcode
@@ -74,9 +74,6 @@ namespace ctcRating;
         add_action('wp_ajax_nopriv_ctcUserRating', array($this ,'ctcUserRating'));
         add_action('wp_ajax_ctcGetUsers', array($this ,'ctcGetUsers'));
         add_action('wp_ajax_nopriv_ctcGetUsers', array($this ,'ctcGetUsers'));
-
-        
-       add_shortcode('ctc_rating', array($this,'ctcDisplayRating'));
        add_action( 'init', array($this,'ctcRatingGutenbergBlocks' ));
       
 
@@ -120,6 +117,7 @@ register_block_type(
   'ctc-rating/add-ctc-rating',
   array(
      'editor_script' => 'ctcRatingBlockJs',
+     'render_callback'=>array($this,'ctcDisplayRating')
   )
 );
    }

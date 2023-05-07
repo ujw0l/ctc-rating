@@ -21,6 +21,6 @@ registerBlockType('ctc-rating/add-ctc-rating', {
         crtEl('span', { style: { padding: '2px', width: '70', height: '25', border: '1px solid rgba(0,0,0,1)', marginLeft: '5px', marginRight: '5px;', fontSize: '15px' }, }, '10,000'),
         crtEl('span', { style: { textShadow: '5px 5px 10px  rgba(0,0,0,0.8)', lineHeight: '1.7', fontSize: "25px" }, className: 'dashicons dashicons-thumbs-down' })),
 
-    save: () => crtEl('div', { className: 'ctc-rating-block' }, '[ctc_rating]')
+  
 
 })

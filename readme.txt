@@ -1,5 +1,6 @@
 === CTC Rating ===
 Contributors: UjW0L
+Donate link: https://www.patreon.com/ujw0l/membership
 Tags: Block, Rating, thumb up, thumb down,like, dislike
 Requires at least: 5.0.0
 Tested up to: 6.2.0

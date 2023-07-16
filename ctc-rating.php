@@ -3,20 +3,20 @@
  Plugin Name:CTC Rating
  Plugin URI:https://github.com/ujw0l/ctc-rating
  Description: Thumb up and thumb down  rating for WordPress post
- Version: 1.1.0
+ Version: 1.6.0
  Author: Ujwol Bastakoti
  Author URI:https://ujw0l.github.io/
 Text Domain:  ctc-rating
  License: GPLv2
  */
-namespace ctcRating;
+
  class ctcRating{
 
     public function __construct(){
 
         define('CTCR_DIR_PATH',plugin_dir_url(__FILE__) );
         self::ctcRatingADU();
-        self::ctcRatingAddActionsShortCode();   
+        self::ctcRatingAddActions();   
     }
 /** 
 * Plugin activation, deactivation and uninstall
@@ -24,7 +24,7 @@ namespace ctcRating;
    public function ctcRatingADU(){   
     register_activation_hook(__FILE__, array($this, 'ctcRatingActivate'));
     register_deactivation_hook(__FILE__,  array($this,'ctcRatingDeactivate'));
-    register_uninstall_hook(__FILE__,array($this,'ctcRatingUninstall'));
+    
     }
 
     /** 
@@ -33,6 +33,7 @@ namespace ctcRating;
 
     public function ctcRatingActivate(){
         global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
         $sql = "CREATE TABLE `".$wpdb->prefix."ctcRating`(
             `postId` mediumint(11) NOT NULL,
             `thumbsUpCount` int(10) DEFAULT 0,
@@ -57,71 +58,61 @@ namespace ctcRating;
 /** 
 *Drop table on uninstall
 */
-    public function ctcRatingUninstall(){
-        global $wpdb;
-        $wpdb->query("DROP TABLES {$wpdb->prefix}ctcRating;");
-    }
+public function ctcRatingUninstall(){
+  global $wpdb;
+  $wpdb->query("DROP TABLES {$wpdb->prefix}ctcRating;");
+}
 
     /** 
     *Add required actions and add shortcode
     */
 
-    public  function ctcRatingAddActionsShortCode(){
+    public  function ctcRatingAddActions(){
 
-        add_action( 'wp_enqueue_scripts', array($this,'ctcRatingEnequeJs' ));
-        add_action( 'wp_enqueue_scripts', array($this,'ctcRatingEnequeCss' ));
+        
         add_action('wp_ajax_ctcUserRating', array($this ,'ctcUserRating'));
         add_action('wp_ajax_nopriv_ctcUserRating', array($this ,'ctcUserRating'));
         add_action('wp_ajax_ctcGetUsers', array($this ,'ctcGetUsers'));
         add_action('wp_ajax_nopriv_ctcGetUsers', array($this ,'ctcGetUsers'));
-
-        
-       add_shortcode('ctc_rating', array($this,'ctcDisplayRating'));
-       add_action( 'init', array($this,'ctcRatingGutenbergBlocks' ));
+		add_action('init', array($this,'ctcRatingGutenbergBlocks'));
       
-
+    
     }
 
-    /** 
-    * Eneque frontend scripts
-    */
-  public function ctcRatingEnequeJS(){
-   wp_enqueue_script('jsOverlay', CTCR_DIR_PATH.'js/js-overlay.js', array());
-   wp_enqueue_script('ctcRatingFrontendlJs', CTCR_DIR_PATH.'js/ctc_rating.js', array('jsOverlay'));
-   wp_localize_script( 'ctcRatingFrontendlJs', 'ctcRating ', array(
-                                                                    'ctcRatingAjaxUrl' =>admin_url( 'admin-ajax.php' ),
-                                                                    'notLoggedIn' => __('You need to log in to rate this post.','ctc-rating'),
-                                                                    'alreadyThumbedUp'=>__('You have already thumbed up this post','ctc-rating'),
-                                                                    'alreadyThumbedDown'=>__('You have already thumbed down this post','ctc-rating'),
-                                                                    'thumbUp'=>__('Thumb up this post','ctc-rating'),
-                                                                    'thumbDown'=>__('Thumb down this post','ctc-rating')
-                                                                    ));
-  }
+ 
 
-  /** 
-    * Eneque frontend styles
-    */
-  public function ctcRatingEnequeCss(){
-    wp_enqueue_style( 'ctcRatingFrontendCss', CTCR_DIR_PATH.'css/ctc_rating.css'); 
-    wp_enqueue_style( 'dashicons' );  
-   }
+
 
 /**
  * Rgister block editor scripts
  */
    public function ctcRatingGutenbergBlocks(){
-// Block Editor Script.
-wp_register_script(
-  'ctcRatingBlockJs',
-  CTCR_DIR_PATH.'js/ctc_rating_block.js',
-  array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n' ),
+
+
+
+	wp_enqueue_style( 'ctcRatingFrontendCss', CTCR_DIR_PATH.'build/style-index.css', array( 'dashicons')); 
+   
+	wp_enqueue_script('ctcRatingFrontendlJs', CTCR_DIR_PATH.'build/frontend.js',);
+	wp_localize_script( 'ctcRatingFrontendlJs', 'ctcRating ', array(
+																	 'ctcRatingAjaxUrl' =>admin_url( 'admin-ajax.php' ),
+																	 'notLoggedIn' => __('You need to log in to rate this post.','ctc-rating'),
+																	 'alreadyThumbedUp'=>__('You have already thumbed up this post','ctc-rating'),
+																	 'alreadyThumbedDown'=>__('You have already thumbed down this post','ctc-rating'),
+																	 'thumbUp'=>__('Thumb up this post','ctc-rating'),
+																	 'thumbDown'=>__('Thumb down this post','ctc-rating')
+																	 ));
+
+	register_block_type( __DIR__ . '/build',
+    array(          
+	  'view_script'=> 'ctcRatingFrontendlJs', 
+	  'style'=>'ctcRatingFrontendCss',
+     'render_callback'=>array($this,'ctcDisplayRating')
+
+	)
 );
-register_block_type(
-  'ctc-rating/add-ctc-rating',
-  array(
-     'editor_script' => 'ctcRatingBlockJs',
-  )
-);
+
+
+
    }
 
    /** 
@@ -150,9 +141,20 @@ register_block_type(
     $prpSql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}ctcRating WHERE postId=%d",get_the_ID());
    $rating = $wpdb->get_row($prpSql,ARRAY_A);
 
+
    
-      $thumbUpClass =  false === strpos($rating['thumbsUpUser'],$needle)?'':esc_attr('ctcUserThumbUp');
-      $thumbDownClass=  false === strpos($rating['thumbsDownUser'],$needle) ? '':esc_attr( 'ctcUserThumbDown') ;
+
+   $rating =  null == $rating ? ["postId"=>get_the_ID(),  "thumbsUpCount"=>'0',"thumbsDownCount"=>"0","thumbsUpUser"=>'',"thumbsDownUser"=>''] : $rating;
+
+
+
+
+        $thumUpUser =  null == $rating ? '' : $rating['thumbsUpUser'];
+		$thumDownUser =  null == $rating ? '' : $rating['thumbsDownUser'];
+
+   
+      $thumbUpClass =  false === strpos( $thumUpUser,$needle)?'':esc_attr('ctcUserThumbUp');
+      $thumbDownClass=  false === strpos($thumDownUser,$needle) ? '':esc_attr( 'ctcUserThumbDown') ;
       $thumUpCount = empty($rating['thumbsUpCount'])? 0 : esc_html($rating['thumbsUpCount']);
       $thumbDownCount = empty($rating['thumbsDownCount']) ? 0 : esc_html($rating['thumbsDownCount']);
 
@@ -281,7 +283,7 @@ if(is_numeric($_POST['post_id'])):
   global $wpdb;
 
   $columnToQuery = 'thumb-up-count' == $_POST['user_to_get'] ? 'thumbsUpUser' :  'thumbsDownUser';
-  $displayUsers = 'thumb-up-count' == $_POST['user_to_get'] ? '<p class="ctc-liked-by">'.__('Thumbs-up by','ctc-rating').'</p>' : '<p class="ctc-disliked-by">'.__('Thumbs-down by' ,'ctc-user').'</p>';
+  $displayUsers = 'thumb-up-count' == $_POST['user_to_get'] ? '<p class="ctc-liked-by" style="margin-top:0px;text-align:center;" >'.__('Liked by','ctc-rating').'</p>' : '<p class="ctc-disliked-by" style="margin-top:0px;text-align:center;"  >'.__('Disliked by' ,'ctc-user').'</p>';
 $prepSql = $wpdb->prepare("SELECT {$columnToQuery} FROM {$wpdb->prefix}ctcRating WHERE postId=%d",absint($_POST['post_id']));
 $userIds = explode(',',str_replace('~','',$wpdb->get_results($prepSql, ARRAY_N )[0][0]));
 
@@ -304,3 +306,12 @@ wp_die();
  new ctcRating();
 
 
+ register_uninstall_hook(__FILE__, 'ctcRatingUninstall');
+
+ /** 
+*Drop table on uninstall
+*/
+ function ctcRatingUninstall(){
+	global $wpdb;
+	$wpdb->query("DROP TABLES {$wpdb->prefix}ctcRating;");
+  }

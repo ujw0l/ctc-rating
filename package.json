@@ -1,22 +1,23 @@
 {
-  "name": "ctc-rating",
-  "version": "1.0.0",
-  "description": "=== CTC Rating === Contributors: UjW0L Tags: Rating, thumb up, thumb down,like, dislike Requires at least: 5.0.0 Tested up to: 5.5.1 Requires PHP: 5.0.0 Stable tag: 1.0.0 License: GPL V2",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ujw0l/ctc-rating.git"
-  },
-  "author": "UjW0L",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ujw0l/ctc-rating/issues"
-  },
-  "homepage": "https://github.com/ujw0l/ctc-rating#readme",
-  "dependencies": {
-    "js-overlay": "^1.0.9"
-  }
+	"name": "ctc-rating",
+	"version": "0.1.0",
+	"description": "Example block scaffolded with Create Block tool.",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^26.8.0"
+	},
+	"dependencies": {
+		"js-overlay": "^1.1.0"
+	}
 }

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ctc-rating/ctc-rating",
+  "version": "1.6.0",
+  "title": "CTC Rating",
+  "category": "widgets",
+  "icon": "thumbs-up",
+  "description": "Block to add ctc rating to page or post",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "ctc-rating",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:/frontend.js"
+}

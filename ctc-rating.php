@@ -3,7 +3,7 @@
  Plugin Name:CTC Rating
  Plugin URI:https://github.com/ujw0l/ctc-rating
  Description: Thumb up and thumb down  rating for WordPress post
- Version: 1.6.0
+ Version: 1.7.0
  Author: Ujwol Bastakoti
  Author URI:https://ujw0l.github.io/
 Text Domain:  ctc-rating
@@ -90,25 +90,24 @@ public function ctcRatingUninstall(){
 
 
 
-	wp_enqueue_style( 'ctcRatingFrontendCss', CTCR_DIR_PATH.'build/style-index.css', array( 'dashicons')); 
-   
-	wp_enqueue_script('ctcRatingFrontendlJs', CTCR_DIR_PATH.'build/frontend.js',);
-	wp_localize_script( 'ctcRatingFrontendlJs', 'ctcRating ', array(
-																	 'ctcRatingAjaxUrl' =>admin_url( 'admin-ajax.php' ),
-																	 'notLoggedIn' => __('You need to log in to rate this post.','ctc-rating'),
-																	 'alreadyThumbedUp'=>__('You have already thumbed up this post','ctc-rating'),
-																	 'alreadyThumbedDown'=>__('You have already thumbed down this post','ctc-rating'),
-																	 'thumbUp'=>__('Thumb up this post','ctc-rating'),
-																	 'thumbDown'=>__('Thumb down this post','ctc-rating')
-																	 ));
+
+
+  $param =  array(
+    'ctcRatingAjaxUrl' =>admin_url( 'admin-ajax.php' ),
+    'notLoggedIn' => __('You need to log in to rate this post.','ctc-rating'),
+    'alreadyThumbedUp'=>__('You have already thumbed up this post','ctc-rating'),
+    'alreadyThumbedDown'=>__('You have already thumbed down this post','ctc-rating'),
+    'thumbUp'=>__('Thumb up this post','ctc-rating'),
+    'thumbDown'=>__('Thumb down this post','ctc-rating')
+  );
+
 
 	register_block_type( __DIR__ . '/build',
-    array(          
-	  'view_script'=> 'ctcRatingFrontendlJs', 
-	  'style'=>'ctcRatingFrontendCss',
-     'render_callback'=>array($this,'ctcDisplayRating')
+    array(   
+       'attributes'=> array('param'=>['type'=>'array', "default"=>$param], ),         
+     'render_callback'=>array($this,'ctcDisplayRating'),
 
-	)
+    ),
 );
 
 
@@ -132,7 +131,7 @@ public function ctcRatingUninstall(){
    *Display rating on frontend
    */
 
-   public function ctcDisplayRating(){
+   public function ctcDisplayRating($atts, $content){
     global $wpdb;
 
     $needle = '~'.get_current_user_id().'~';
@@ -160,7 +159,7 @@ public function ctcRatingUninstall(){
 
         ob_start();
     ?>
-    <div  class="ctcItemRating">
+    <div  class="ctcItemRating" data-ctcr-param='<?php echo(json_encode( $atts['param'])); ?>'>
     				<?php if(!empty($thumbUpClass)):
           					$thumbUpTitle=__(esc_attr( "You already thumbed up this post"),'ctc-rating');
           				  endif;

@@ -2,6 +2,10 @@ import {jsOverlay} from "js-overlay";
 
 window.addEventListener( 'DOMContentLoaded', () => {
 	const overlay = new jsOverlay();
+
+	let ratingDiv = document.querySelector('.ctcItemRating');
+	let ctcRating = JSON.parse(ratingDiv.getAttribute('data-ctcr-param'));
+
 	/**
 	 * Script to handle user rating
 	 */

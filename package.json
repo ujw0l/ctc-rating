@@ -1,8 +1,8 @@
 {
 	"name": "ctc-rating",
-	"version": "0.1.0",
-	"description": "Example block scaffolded with Create Block tool.",
-	"author": "The WordPress Contributors",
+	"version": "1.7.0",
+	"description": "Block to let user Thum up or thumb down post",
+	"author": "UjW0L",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
@@ -15,7 +15,7 @@
 		"start": "wp-scripts start"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^26.19.0"
+		"@wordpress/scripts": "^26.8.0"
 	},
 	"dependencies": {
 		"js-overlay": "^1.1.0"

@@ -37,6 +37,6 @@ Download plugin from plugin section of WordPress and activate it.
 * JSX Support 
 * Minor fixes
 
-### 1.6.0 ###
+### 1.7.1 ###
 
 * Bug fixes

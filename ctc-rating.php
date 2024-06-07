@@ -3,7 +3,7 @@
  Plugin Name:CTC Rating
  Plugin URI:https://github.com/ujw0l/ctc-rating
  Description: Thumb up and thumb down  rating for WordPress post
- Version: 1.7.0
+ Version: 1.7.1
  Author: Ujwol Bastakoti
  Author URI:https://ujw0l.github.io/
 Text Domain:  ctc-rating
@@ -76,11 +76,16 @@ public function ctcRatingUninstall(){
         add_action('wp_ajax_nopriv_ctcGetUsers', array($this ,'ctcGetUsers'));
 		add_action('init', array($this,'ctcRatingGutenbergBlocks'));
       
-    
+    add_action('enqueue_block_assets', function (): void {
+      wp_enqueue_style('dashicons');
+  });
     }
 
  
+  
 
+
+    
 
 
 /**

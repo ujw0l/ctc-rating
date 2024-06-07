@@ -18,6 +18,7 @@
 		"@wordpress/scripts": "^26.8.0"
 	},
 	"dependencies": {
+		"@wordpress/server-side-render": "^5.0.0",
 		"js-overlay": "^1.1.0"
 	}
 }

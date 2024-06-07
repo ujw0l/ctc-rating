@@ -1,9 +1,13 @@
+import ServerSideRender from '@wordpress/server-side-render';
+
 /**
  * Retrieves the translation of text.
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
  */
 import { __ } from '@wordpress/i18n';
+
+import { Dashicon } from '@wordpress/components';
 
 /**
  * React hook that is used to mark the block wrapper element.
@@ -34,11 +38,10 @@ export default function Edit() {
 		<div { ...useBlockProps() }>
 			 
 			 <div className='ctc-rating-block' style={{height:"35px"}}>
-				<span style={{  marginTop : '-3px',textShadow: '5px 5px 10px  rgba(0,0,0,0.8)', lineHeight: '1.5', fontSize: "25px" }} className='dashicons dashicons-thumbs-up'> </span>
-				<span style={ { padding: '2px', width: '70', height: '25', border: '1px solid rgba(0,0,0,1)', marginLeft: '5px', marginRight: '5px;', fontSize: '15px' }}>1000</span>
-				<span style={{ padding: '2px', width: '70', height: '25', border: '1px solid rgba(0,0,0,1)', marginLeft: '5px', marginRight: '5px;', fontSize: '15px' }}>1000</span>
-				<span style={{ marginTop : '-5px', textShadow: '5px 5px 10px  rgba(0,0,0,0.8)', lineHeight: '1.7', fontSize: "25px" }}  className='dashicons dashicons-thumbs-down' > </span>
-			 </div>
+
+			 <ServerSideRender block="ctc-rating/ctc-rating"/>
+
+			</div>
 		</div>
 	);
 }

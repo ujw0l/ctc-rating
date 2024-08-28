@@ -2,7 +2,7 @@
 Contributors: UjW0L
 Tags: Block, Rating,like, dislike
 Requires at least: 5.0.0
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 5.0.0
 Stable tag: 1.8.0
 License: GPL V2

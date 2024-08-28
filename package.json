@@ -19,6 +19,6 @@
 	},
 	"dependencies": {
 		"@wordpress/server-side-render": "^5.0.0",
-		"js-overlay": "^1.1.0"
+		"js-overlay": "^1.1.1"
 	}
 }

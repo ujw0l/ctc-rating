@@ -4,7 +4,7 @@ Tags: Block, Rating,like, dislike
 Requires at least: 5.0.0
 Tested up to: 6.5
 Requires PHP: 5.0.0
-Stable tag: 1.7.1
+Stable tag: 1.8.0
 License: GPL V2
 
 Plugin lets user to add rating ability to post through thumb up and thumb down and display count of total thumbed or total thumbed down. As well
@@ -39,4 +39,7 @@ Download plugin from plugin section of WordPress and activate it.
 
 ### 1.7.1 ###
 
+* Bug fixes
+
+### 1.8.0 ###
 * Bug fixes

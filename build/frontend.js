@@ -1,1 +1,761 @@
-(()=>{"use strict";class t{constructor(t){null!=t&&this.createOverlay(t)}createOverlay(t){let e=window.innerWidth+1,r=window.innerHeight+1,i=null!=t.containerHt?t.containerHt:500,a=null!=t.containerWd?t.containerWd:650,o=this.getOptimizedElSize(window.innerWidth,window.innerHeight,a,i),n=document.createElement("style");n.id="ctc-scroll-css",n.innerHTML="::-webkit-scrollbar-track {background: rgba(255, 255, 255, 1);} ::-moz-scrollbar-track { background: rgba(255, 255, 255, 1);} #gal-sidebar::-webkit-scrollbar {display: none;} #gal-sidebar::-moz-scrollbar {display: none;}",document.querySelector("head").appendChild(n),document.body.style.overflow="hidden";let l=document.createElement("div");l.id="js-modal-overlay",l.className=void 0!==t.overlayNum?`js-overlay-${t.overlayNum}`:"",l.style=`position:fixed;height:${r}px;width:${e}px;background-color:rgba(0,0,0,.6);z-index:100000;top:0%;left:0%;right:0%;bottom:0%;`;let d=document.createElement("div");d.id="js-modal-el-container",d.style=`overflow:auto;border:1px solid rgba(0,0,0,1);text-align:center;left:${(e-5-o.width)/2}px;top:${(r-o.height)/2}px;width:${o.width}px;height:${o.height}px;position:absolute;float:left;background-color:rgba(255,255,255,1);`,l.appendChild(d);let s=document.createElement("span");s.id="overlay-close-btn",s.title="Close",s.className=void 0!==t.overlayNum?`js-overlay-close-${t.overlayNum}`:"",s.innerHTML="&#10539;",s.style=`line-height:1.5;text-align:center;position:absolute;width:30px;height:30px;cursor:pointer;top:${(r-o.height)/2-25}px;left:${(e-o.width)/2+o.width-8}px;font-size:20px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);z-index:100000;`,l.appendChild(s),s.addEventListener("click",(()=>{document.body.removeChild(l),document.querySelector("head").removeChild(n),document.body.style.overflow=""})),null!=t.elContent?(d.innerHTML=t.elContent,document.body.insertBefore(l,document.body.firstChild)):null!=t.imgGallery?this.loadGallery(l,s,d,t,[o.height,o.width]):null!=t.iframeUrl?(d.innerHTML=`<iframe height="${o.height}" width="${o.width}" frameBorder= "0"   src="${t.iframeUrl}" ></iframe>`,document.body.insertBefore(l,document.body.firstChild)):(l.appendChild(d),this.ajaxContent(d,t,[o.height,o.width]),document.body.insertBefore(l,document.body.firstChild)),window.addEventListener("resize",(()=>this.adjustOverlay(l,d,s,[i,a]))),window.addEventListener("keydown",(t=>{"Escape"===t.code&&s.click()}))}adjustOverlay(t,e,r,i){let a=window.innerWidth+1,o=window.innerHeight+1,n=e.querySelector("#content-loading"),l=t.querySelector("#img-loading"),d=this.getOptimizedElSize(window.innerWidth,window.innerHeight,i[1],i[0]);t.style.width=a+"px",t.style.height=o+"px",r.style.left=(a-d.width)/2+d.width-8+"px",r.style.top=(o-d.height)/2-25+"px";let s=e.querySelector("#js-overlay-img");if(null!=s){let t=parseInt(s.getAttribute("data-img-count")),r=e.querySelector("#img-title"),i=new Image;i.src=s.src;let a=this.getOptimizedElSize(d.width-60,d.height-60,i.width,i.height,1),o=1<t?(d.width-a.width)/2-26:(d.width-a.width)/2;s.style.height=a.height+"px",s.style.width=a.width+"px",s.style.marginLeft=o+"px",s.style.marginTop=(d.height-a.height)/2+"px",r.style.marginTop=d.height-25+"px",r.style.width=d.width+"px",2<=t&&(e.querySelector("#next-btn").style.marginTop=(d.height-25)/2+"px",e.querySelector("#prev-btn").style.marginTop=(d.height-25)/2+"px")}e.style.left=(a-5-d.width)/2+"px",e.style.top=(o-d.height)/2+"px",e.style.height=d.height+"px",e.style.width=d.width+"px",null!=l&&(l.style.marginTop=(window.innerHeight-46)/2+"px",l.style.marginLeft=(window.innerWidth-46)/2+"px"),null!=e.querySelector("iframe")&&(e.querySelector("iframe").height=d.height,e.querySelector("iframe").width=d.width),null!=n&&(n.style.marginTop=(d.height-46)/2+"px",n.style.marginLeft=(d.width-46)/2+"px")}ajaxContent(t,e,r){let i=null!=e.ajaxMethod?e.ajaxMethod.toUpperCase():"GET",a=null!=e.ajaxData?e.ajaxData:"",o=t.querySelector("#content-loading");if(null==o){o=document.createElement("div"),o.id="content-loading",o.style=`margin-left:${(r[1]-46)/2}px;margin-top:${(r[0]-46)/2}px;height:40px;width:40px;border-radius:50%;border-color:rgba(0,0,0,1);border-style: solid; border-width: 3px;z-index:1100; `,o.setAttribute("data-wait","left"),t.appendChild(o);var n=setInterval((()=>{switch(o.getAttribute("data-wait")){case"left":o.setAttribute("data-wait","top"),o.style.borderColor="rgba(0,0,0,0.5)",o.style.borderTop="3px solid  rgba(0,0,0,1)";break;case"top":o.setAttribute("data-wait","right"),o.style.borderColor="rgba(0,0,0,0.5)",o.style.borderRight="3px solid  rgba(0,0,0,1)";break;case"right":o.setAttribute("data-wait","bottom"),o.style.borderColor="rgba(0,0,0,0.5)",o.style.borderBottom="3px solid  rgba(0,0,0,1)";break;case"bottom":o.setAttribute("data-wait","left"),o.style.borderColor="rgba(0,0,0,0.5)",o.style.borderLeft="3px solid  rgba(0,0,0,1)"}}),400)}var l=new XMLHttpRequest;l.open(i,e.ajaxUrl,!0),l.responseType="text",l.setRequestHeader("Content-Type","application/x-www-form-urlencoded;"),l.addEventListener("load",(e=>{e.target.status>=200&&e.target.status<400?(clearInterval(n),t.innerHTML=e.target.response):console.log(e.target.statusText)})),l.send(a)}loadGallery(t,e,r,i,a){Array.from(document.querySelectorAll(i.imgGallery)).map(((i,a)=>{let o=Array.from(i.querySelectorAll("img"));o.map(((i,a)=>{i.addEventListener("click",(n=>{null==document.querySelector("#js-modal-overlay")&&document.body.insertBefore(t,document.body.firstChild),this.loadImg(t,e,r,i,a,o,[r.offsetHeight,r.offsetWidth])}))}))}))}loadImg(t,e,r,i,a,o,n){let l=o.length-1>a?a+1:0,d=0<a?a-1:o.length-1,s=1<o.length?`<font style="font-size:11px;" > (${a+1}/${o.length})</font>`:"",u=0<i.title.length?i.title+s:""+s;e.style.display="none",r.style.display="none",r.style.overflow="";let c=new Image;if(c.setAttribute("data-img-count",o.length),c.src=i.src,null==r.querySelector("#img-title")){let t=document.createElement("span");t.id="img-title",t.style=`overflow:scroll;font-size:15px;color:rgba(0,0,0,1);line-height:1.5;font-family:'Courier New', Courier, monospace;text-align:center;position:absolute;left:0px;height:25px;width:${n[1]}px;margin-top:${n[0]-25}px;z-index:100;`,t.innerHTML=u,r.appendChild(t)}else r.querySelector("#img-title").innerHTML=u;if(2<=o.length){if(null==r.querySelector("#prev-btn")){let i=document.createElement("span");i.id="prev-btn",i.title="Previous Image",i.innerHTML="<",i.setAttribute("data-img-num",d),i.style=`color:rgba(0,0,0,1);border:1px solid rgba(0,0,0,1);font-size:20px;cursor:pointer;font-family:'Courier New', Courier, monospace;text-align:center;line-height: 1.1;margin-left:2px;margin-top:${(n[0]-25)/2}px;width:20px;height:20px;float:left;z-index:100;`,i.addEventListener("mouseover",(t=>t.target.style.boxShadow="1px 1px 5px 1px rgba(0,0,0,1)")),i.addEventListener("mouseleave",(t=>t.target.style.boxShadow="")),i.addEventListener("click",(i=>this.loadImg(t,e,r,o[parseInt(i.target.getAttribute("data-img-num"))],parseInt(i.target.getAttribute("data-img-num")),o,[r.offsetHeight,r.offsetWidth]))),r.appendChild(i)}else r.querySelector("#prev-btn").setAttribute("data-img-num",d);if(null==r.querySelector("#next-btn")){let i=document.createElement("span");i.id="next-btn",i.innerHTML=">",i.title="Next Image",i.style=`color:rgba(0,0,0,1);border:1px solid rgba(0,0,0,1);font-size:20px;cursor:pointer;font-family:'Courier New', Courier, monospace;text-align:center;line-height: 1.1;margin-right:2px;margin-top:${(n[0]-25)/2}px;width:20px;height:20px;float:right;z-index:100;`,i.setAttribute("data-img-num",l),i.addEventListener("mouseover",(t=>t.target.style.boxShadow="1px 1px 5px 1px rgba(0,0,0,1)")),i.addEventListener("mouseleave",(t=>t.target.style.boxShadow="")),i.addEventListener("click",(i=>this.loadImg(t,e,r,o[parseInt(i.target.getAttribute("data-img-num"))],parseInt(i.target.getAttribute("data-img-num")),o,[r.offsetHeight,r.offsetWidth]))),r.appendChild(i)}else r.querySelector("#next-btn").setAttribute("data-img-num",l)}null!=r.querySelector("img")&&r.removeChild(r.querySelector("img"));let h=r.querySelector("#content-loading");if(null==h){h=document.createElement("div"),h.id="img-loading",h.style=`display:inline-block;float:left;position:relative;margin-left:${(window.innerWidth-46)/2}px;margin-top:${(window.innerHeight-46)/2}px;height:40px;width:40px;border-radius:50%;border-color:rgba(255,255,255,1);border-style: solid; border-width: 3px;z-index:1100; `,h.setAttribute("data-wait","left"),t.appendChild(h);var p=setInterval((()=>{switch(h.getAttribute("data-wait")){case"left":h.setAttribute("data-wait","top"),h.style.borderColor="rgba(255,255,255,1)",h.style.borderTop="3px solid  rgba(0,0,0,1)";break;case"top":h.setAttribute("data-wait","right"),h.style.borderColor="rgba(255,255,255,1)",h.style.borderRight="3px solid  rgba(0,0,0,1)";break;case"right":h.setAttribute("data-wait","bottom"),h.style.borderColor="rgba(255,255,255,1)",h.style.borderBottom="3px solid  rgba(0,0,0,1)";break;case"bottom":h.setAttribute("data-wait","left"),h.style.borderColor="rgba(255,255,255,1)",h.style.borderLeft="3px solid  rgba(0,0,0,1)"}}),400)}c.addEventListener("load",(i=>{t.removeChild(h),clearInterval(p),e.style.display="",r.style.display="";let a=this.getOptimizedElSize(n[1]-60,n[0]-60,i.target.width,i.target.height,1),l=1<o.length?(n[1]-a.width)/2-26:(n[1]-a.width)/2;i.target.id="js-overlay-img",i.target.style=`position:relative;border:1px solid rgba(0,0,0,1);float:left;height:${a.height}px;width:${a.width}px;margin-left:${l}px;margin-top:${(n[0]-a.height)/2}px;`,r.appendChild(i.target)}))}getOptimizedElSize(t,e,r,i,a){let o=0,n=0,l=0,d=0,s=null!=a?a:.89,u=1-s;if(r>=t&&i>=e)r>=i?r>i?(n=r/t,d=r/n-u*t,l=i*(d/r),l>=s*e&&(o=e/i,l=i*o-u*e,d=r*(l/i))):t>e?(l=s*e,d=l):e>t?(d=s*t,l=d):(o=e/i,l=i*o-u*e,d=r*(l/i)):(o=i/e,l=i/o-u*e,d=r*(l/i));else if(r>=t&&i<e)n=t/r,d=r*n-u*t,l=i*(d/r);else if(i>=e&&r<t)o=e/i,l=i*o-u*e,d=r*(l/i),l=i*(d/r);else{let a=s*t,n=s*e;r>=a&&i>=n?(d=a*(a/r),l=e*o):r>=a&&i<n?(d=r*(a/r),l=i*(d/r)):i>=n&&r<a?(l=i*(n/i),d=r*(l/i)):(d=r,l=i),l=i*(d/r)}return d>s*t&&(d=s*t,l=i*(d/r)),{width:d,height:l}}}window.addEventListener("DOMContentLoaded",(()=>{const e=new t;let r=document.querySelector(".ctcItemRating"),i=JSON.parse(r.getAttribute("data-ctcr-param"));const a=(t,e)=>{let r,i,a,n;switch(e){case"thumbsUp":r=document.querySelector("#ctcThumbUpCount-"+t),a=parseInt(r.getAttribute("data-type-thumupcount"))+1,r.innerHTML=o(a),r.setAttribute("data-type-thumupcount",a);break;case"thumbsDown":i=document.querySelector("#ctcThumbDownCount-"+t),n=parseInt(i.getAttribute("data-type-thumdowncount"))+1,i.innerHTML=o(n),i.setAttribute("data-type-thumdowncount",n);break;case"thumbsUpReversed":r=document.querySelector("#ctcThumbUpCount-"+t),i=document.querySelector("#ctcThumbDownCount-"+t),a=parseInt(r.getAttribute("data-type-thumupcount"))-1,n=parseInt(i.getAttribute("data-type-thumdowncount"))+1,r.innerHTML=o(a),r.setAttribute("data-type-thumupcount",a),i.innerHTML=o(n),i.setAttribute("data-type-thumdowncount",n);break;case"thumbsDownReversed":r=document.querySelector("#ctcThumbUpCount-"+t),i=document.querySelector("#ctcThumbDownCount-"+t),a=parseInt(r.getAttribute("data-type-thumupcount"))+1,n=parseInt(i.getAttribute("data-type-thumdowncount"))-1,r.innerHTML=o(a),r.setAttribute("data-type-thumupcount",a),i.innerHTML=o(n),i.setAttribute("data-type-thumdowncount",n);break;case"unThumbsUp":r=document.querySelector("#ctcThumbUpCount-"+t),a=parseInt(r.getAttribute("data-type-thumupcount"))-1,r.innerHTML=o(a),r.setAttribute("data-type-thumupcount",a);break;case"unThumbsDown":i=document.querySelector("#ctcThumbDownCount-"+t),n=parseInt(i.getAttribute("data-type-thumdowncount"))-1,i.innerHTML=o(n),i.setAttribute("data-type-thumdowncount",n)}},o=t=>{let e=[],r="",i="";e=(t+="").split("."),r=e[0],i=e.length>1?"."+e[1]:"";for(var a=/(\d+)(\d{3})/;a.test(r);)r=r.replace(a,"$1,$2");return r+i};Array.from(document.querySelectorAll([".ctcThumbUp",".ctcThumbDown",".ctcUserThumbUp",".ctcUserThumbDown"])).map((t=>t.addEventListener("click",(t=>(t=>{let e=t.getAttribute("data-type-id"),r="action=ctcUserRating&rating_data="+JSON.stringify({postId:e,ratingType:t.getAttribute("data-type-rating")});var o=new XMLHttpRequest;o.open("POST",i.ctcRatingAjaxUrl,!0),o.responseType="text",o.setRequestHeader("Content-Type","application/x-www-form-urlencoded;"),o.addEventListener("load",(r=>{if(!(r.target.status>=200&&r.target.status<400))return!1;"notLoggedIn"==r.target.response?alert(i.notLoggedIn):((t,e,r)=>{let o,n=r.getAttribute("data-type-scenario");switch(t){case"thumbsUp":r.title=i.alreadyThumbedUp,r.classList.remove("ctcThumbDown"),r.classList.add("ctcUserThumbUp"),a(e,"thumbsUp");break;case"thumbsDown":r.title=i.alreadyThumbedDown,r.classList.remove("ctcThumbUp"),r.classList.add("ctcUserThumbDown"),r.style.fontSize="25px",a(e,"thumbsDown");break;case"thumbsUpReversed":r.title=i.alreadyThumbedDown,r.classList.add("ctcUserThumbDown"),r.style.fontSize="25px",o=document.querySelector("#ctcThumbUp-"+e),o.title=i.thumbUp,o.classList.remove("ctcUserThumbUp"),o.classList.add("ctcThumbUp"),o.style.fontSize="20px",a(e,"thumbsUpReversed");break;case"thumbsDownReversed":r.title=i.alreadyThumbedUp,r.classList.remove("ctcThumbUp"),r.classList.add("ctcUserThumbUp"),r.style.fontSize="25px",o=document.querySelector("#ctcThumbDown-"+e),o.title=i.thumbDown,o.classList.remove("ctcUserThumbDown"),o.classList.add("ctcThumbDown"),o.style.fontSize="20px",a(e,"thumbsDownReversed",n);break;case"unThumbsUp":r.title=i.thumbUp,r.classList.remove("ctcUserThumbUp"),r.classList.add("ctcThumbUp"),r.style.fontSize="20px",a(e,"unThumbsUp");break;case"unThumbsDown":r.title=i.thumbDown,r.classList.remove("ctcUserThumbDown"),r.classList.add("ctcThumbDown"),r.style.fontSize="20px",a(e,"unThumbsDown")}})(r.target.response,e,t)})),o.send(r)})(t.target))))),Array.from(document.querySelectorAll(".ctcThumbsUpStat,.ctcThumbsDownStat")).map((t=>t.addEventListener("click",(t=>{var r;"0"!=("thumb-up-count"==t.target.getAttribute("data-get")?t.target.getAttribute("data-type-thumupcount"):t.target.getAttribute("data-type-thumdowncount"))&&(r=t.target,e.createOverlay({ajaxUrl:i.ctcRatingAjaxUrl,ajaxData:"action=ctcGetUsers&post_id="+r.getAttribute("data-post-id")+"&user_to_get="+r.getAttribute("data-get"),ajaxMethod:"POST",containerHt:350,containerWd:200}))}))))}))})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./node_modules/js-overlay/js-overlay.js":
+/*!***********************************************!*\
+  !*** ./node_modules/js-overlay/js-overlay.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   jsOverlay: () => (/* binding */ jsOverlay)
+/* harmony export */ });
+
+/*
+*
+*Modal box 
+*Javscript library to display content in modal box
+* https://ujwolbastakoti.wordpress.com/
+* MIT license
+*  
+*
+*/
+
+
+
+class jsOverlay {
+    constructor(param) {
+
+        if (undefined != param) {
+            this.createOverlay(param);
+        } else {
+            return;
+        }
+    }
+
+    /** 
+    * Function to create overlay
+    *
+    *@param param1    Modal setting parameter 
+    */
+
+    createOverlay(param) {
+
+        //script to deal with loading content to the overlay
+        let overlayWidth = window.innerWidth + 1;
+        let overlayHeight = window.innerHeight + 1;
+        let modalHt = undefined != param.containerHt ? param.containerHt : 500;
+        let modalWd = undefined != param.containerWd ? param.containerWd : 650;
+        let optHtWd = this.getOptimizedElSize(window.innerWidth, window.innerHeight, modalWd, modalHt);
+
+
+        let scrollCss = document.createElement('style');
+        scrollCss.id = 'ctc-scroll-css';
+        scrollCss.innerHTML = `::-webkit-scrollbar-track {background: rgba(255, 255, 255, 1);} ::-moz-scrollbar-track { background: rgba(255, 255, 255, 1);} #gal-sidebar::-webkit-scrollbar {display: none;} #gal-sidebar::-moz-scrollbar {display: none;}`;
+        document.querySelector('head').appendChild(scrollCss);
+        document.body.style.overflow = 'hidden'
+
+        let overlayEl = document.createElement('div');
+        overlayEl.id = "js-modal-overlay";
+        overlayEl.className = undefined !== param.overlayNum ? `js-overlay-${param.overlayNum}` : '';
+        overlayEl.style = `position:fixed;height:${overlayHeight}px;width:${overlayWidth}px;background-color:rgba(0,0,0,.6);z-index:100000;top:0%;left:0%;right:0%;bottom:0%;`;
+
+
+        let elContainer = document.createElement('div');
+        elContainer.id = 'js-modal-el-container';
+        elContainer.style = `overflow:auto;border:1px solid rgba(0,0,0,1);text-align:center;left:${((overlayWidth - 5) - optHtWd.width) / 2}px;top:${(overlayHeight - optHtWd.height) / 2}px;width:${optHtWd.width}px;height:${optHtWd.height}px;position:absolute;float:left;background-color:rgba(255,255,255,1);`;
+        overlayEl.appendChild(elContainer);
+
+        let closeBtn = document.createElement('span');
+        closeBtn.id = "overlay-close-btn";
+        closeBtn.title = "Close";
+        closeBtn.className = undefined !== param.overlayNum ? `js-overlay-close-${param.overlayNum}` : '';
+        closeBtn.innerHTML = "&#10539;";
+        closeBtn.style = `line-height:1.5;text-align:center;position:absolute;width:30px;height:30px;cursor:pointer;top:${((overlayHeight - optHtWd.height) / 2) - 25}px;left:${((overlayWidth - optHtWd.width) / 2) + optHtWd.width - 8}px;font-size:20px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);z-index:100000;`;
+        overlayEl.appendChild(closeBtn);
+        closeBtn.addEventListener('click', () => {
+            document.body.removeChild(overlayEl);
+            document.querySelector('head').removeChild(scrollCss);
+            document.body.style.overflow = '';
+
+        });
+
+
+        if (undefined != param.elContent) {
+            elContainer.innerHTML = param.elContent
+            document.body.insertBefore(overlayEl, document.body.firstChild);
+        } else if (undefined != param.imgGallery) {
+            this.loadGallery(overlayEl, closeBtn, elContainer, param, [optHtWd.height, optHtWd.width]);
+
+        } else if (undefined != param.iframeUrl) {
+            elContainer.innerHTML = `<iframe height="${optHtWd.height}" width="${optHtWd.width}" frameBorder= "0"   src="${param.iframeUrl}" ></iframe>`;
+            document.body.insertBefore(overlayEl, document.body.firstChild);
+        } else {
+            overlayEl.appendChild(elContainer);
+            this.ajaxContent(elContainer, param, [optHtWd.height, optHtWd.width])
+            document.body.insertBefore(overlayEl, document.body.firstChild);
+        }
+
+        window.addEventListener('resize', () => this.adjustOverlay(overlayEl, elContainer, closeBtn, [modalHt, modalWd]));
+        window.addEventListener('keydown', e => {
+            if ('Escape' === e.code) {
+                closeBtn.click();
+            }
+        })
+    }
+
+    /** 
+    *
+    *adjust overlay and component on resize
+    *
+    *@param overlayEl Modal element
+    *@param containerEl Container element
+    *@param closeBtn close button element
+    *@param htWdArr content container height and width
+    */
+    adjustOverlay(overlayEl, elContainer, closeBtn, htWdArr) {
+
+        let overlayWidth = window.innerWidth + 1;
+        let overlayHeight = window.innerHeight + 1;
+        let loadingDiv = elContainer.querySelector('#content-loading');
+        let imgLoading = overlayEl.querySelector('#img-loading');
+
+        let optHtWd = this.getOptimizedElSize(window.innerWidth, window.innerHeight, htWdArr[1], htWdArr[0]);
+
+        overlayEl.style.width = overlayWidth + 'px';
+        overlayEl.style.height = overlayHeight + 'px';
+
+
+        closeBtn.style.left = (((overlayWidth - optHtWd.width) / 2) + optHtWd.width - 8) + 'px'
+        closeBtn.style.top = (((overlayHeight - optHtWd.height) / 2) - 25) + 'px'
+
+        let imgLoaded = elContainer.querySelector('#js-overlay-img')
+
+        if (null != imgLoaded) {
+
+            let totImgs = parseInt(imgLoaded.getAttribute('data-img-count'));
+            let imgTitle = elContainer.querySelector('#img-title');
+
+            let imgObj = new Image();
+            imgObj.src = imgLoaded.src
+            let optImgDim = this.getOptimizedElSize((optHtWd.width - 60), (optHtWd.height - 60), imgObj.width, imgObj.height, 1);
+            let contMargLeft = 1 < totImgs ? ((optHtWd.width - optImgDim.width) / 2) - 26 : (optHtWd.width - optImgDim.width) / 2;
+            imgLoaded.style.height = optImgDim.height + 'px';
+            imgLoaded.style.width = optImgDim.width + 'px';
+            imgLoaded.style.marginLeft = contMargLeft + 'px';
+            imgLoaded.style.marginTop = ((optHtWd.height - optImgDim.height) / 2) + 'px';
+
+            imgTitle.style.marginTop = (optHtWd.height - 25) + 'px'
+            imgTitle.style.width = optHtWd.width + 'px';
+
+            if (2 <= totImgs) {
+                elContainer.querySelector('#next-btn').style.marginTop = ((optHtWd.height - 25) / 2) + 'px';
+                elContainer.querySelector('#prev-btn').style.marginTop = ((optHtWd.height - 25) / 2) + 'px';
+            }
+
+        }
+
+        elContainer.style.left = (((overlayWidth - 5) - optHtWd.width) / 2) + 'px';
+        elContainer.style.top = ((overlayHeight - optHtWd.height) / 2) + 'px';
+        elContainer.style.height = optHtWd.height + 'px';
+        elContainer.style.width = optHtWd.width + 'px';
+
+        if (undefined != imgLoading) {
+            imgLoading.style.marginTop = ((window.innerHeight - 46) / 2) + 'px';
+            imgLoading.style.marginLeft = ((window.innerWidth - 46) / 2) + 'px';
+        }
+
+        if (undefined != elContainer.querySelector('iframe')) {
+            elContainer.querySelector('iframe').height = optHtWd.height;
+            elContainer.querySelector('iframe').width = optHtWd.width;
+        };
+        if (undefined != loadingDiv) {
+            loadingDiv.style.marginTop = ((optHtWd.height - 46) / 2) + 'px';
+            loadingDiv.style.marginLeft = ((optHtWd.width - 46) / 2) + 'px';
+        }
+
+    }
+
+    /** 
+    *
+    *adjust overlay and component on resize
+    *
+    * @param elContainer Container element
+    * @param param Parameter for ajax
+    * @param modalHtWd Array of modal height and width
+    */
+
+    ajaxContent(elContainer, param, modalHtWd) {
+
+        let method = undefined != param.ajaxMethod ? param.ajaxMethod.toUpperCase() : 'GET';
+        let dataToSend = undefined != param.ajaxData ? param.ajaxData : '';
+
+
+        let loadingDivCir = elContainer.querySelector('#content-loading');
+
+        if (null == loadingDivCir) {
+
+            loadingDivCir = document.createElement('div');
+            loadingDivCir.id = `content-loading`;
+            loadingDivCir.style = `margin-left:${(modalHtWd[1] - 46) / 2}px;margin-top:${(modalHtWd[0] - 46) / 2}px;height:40px;width:40px;border-radius:50%;border-color:rgba(0,0,0,1);border-style: solid; border-width: 3px;z-index:1100; `;
+            loadingDivCir.setAttribute('data-wait', 'left');
+            elContainer.appendChild(loadingDivCir);
+
+            var loadingInt = setInterval(() => {
+                switch (loadingDivCir.getAttribute('data-wait')) {
+                    case 'left':
+                        loadingDivCir.setAttribute('data-wait', 'top');
+                        loadingDivCir.style.borderColor = 'rgba(0,0,0,0.5)';
+                        loadingDivCir.style.borderTop = '3px solid  rgba(0,0,0,1)';
+                        break;
+                    case 'top':
+                        loadingDivCir.setAttribute('data-wait', 'right');
+                        loadingDivCir.style.borderColor = 'rgba(0,0,0,0.5)';
+                        loadingDivCir.style.borderRight = '3px solid  rgba(0,0,0,1)';
+                        break;
+                    case 'right':
+                        loadingDivCir.setAttribute('data-wait', 'bottom');
+                        loadingDivCir.style.borderColor = 'rgba(0,0,0,0.5)';
+                        loadingDivCir.style.borderBottom = '3px solid  rgba(0,0,0,1)';
+
+                        break;
+                    case 'bottom':
+                        loadingDivCir.setAttribute('data-wait', 'left');
+                        loadingDivCir.style.borderColor = 'rgba(0,0,0,0.5)';
+                        loadingDivCir.style.borderLeft = '3px solid  rgba(0,0,0,1)';
+                        break;
+                }
+
+            }, 400);
+        }
+        var xhttp = new XMLHttpRequest();
+        xhttp.open(method, param.ajaxUrl, true);
+        xhttp.responseType = "text";
+        xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
+        xhttp.addEventListener('load', event => {
+            if (event.target.status >= 200 && event.target.status < 400) {
+                clearInterval(loadingInt);
+                elContainer.innerHTML = event.target.response;
+            } else {
+                console.log(event.target.statusText);
+            }
+        })
+        xhttp.send(dataToSend);
+    }
+
+    /** 
+    *Function to display image/images
+    *
+    * @param overlayEl Overlay element
+    * @param closeBtn Close button element
+    *@param elContainer Modal container
+    *@param param Setting parameter
+    *@param modalHtWd Modal height width array
+    */
+    loadGallery(overlayEl, closeBtn, elContainer, param, modalHtWd) {
+
+        let imgGallery = Array.from(document.querySelectorAll(param.imgGallery));
+
+        imgGallery.map((x, i) => {
+
+            let galImgs = Array.from(x.querySelectorAll('img'));
+
+            galImgs.map((y, a) => {
+                y.addEventListener('click', e => {
+                    if (null == document.querySelector('#js-modal-overlay')) {
+                        document.body.insertBefore(overlayEl, document.body.firstChild);
+                    }
+                    this.loadImg(overlayEl, closeBtn, elContainer, y, a, galImgs, [elContainer.offsetHeight, elContainer.offsetWidth]);
+                })
+            })
+        })
+    }
+
+    loadImg(overlayEl, closeBtn, elContainer, img, imgNum, imgArr, modalHtWd) {
+
+        let nxtImg = imgArr.length - 1 > imgNum ? imgNum + 1 : 0;
+        let prevImg = 0 < imgNum ? imgNum - 1 : imgArr.length - 1;
+        let imgOfTot = 1 < imgArr.length ? `<font style="font-size:11px;" > (${imgNum + 1}/${imgArr.length})</font>` : '';
+        let imgTitleCont = 0 < img.title.length ? img.title + imgOfTot : '' + imgOfTot;
+        closeBtn.style.display = 'none';
+        elContainer.style.display = 'none';
+        elContainer.style.overflow = '';
+
+        let imgToload = new Image();
+        imgToload.setAttribute('data-img-count', imgArr.length)
+        imgToload.src = img.src;
+
+
+
+        if (undefined == elContainer.querySelector('#img-title')) {
+            let imgTitle = document.createElement('span');
+            imgTitle.id = 'img-title';
+            imgTitle.style = `overflow:scroll;font-size:15px;color:rgba(0,0,0,1);line-height:1.5;font-family:'Courier New', Courier, monospace;text-align:center;position:absolute;left:0px;height:25px;width:${modalHtWd[1]}px;margin-top:${modalHtWd[0] - 25}px;z-index:100;`;
+            imgTitle.innerHTML = imgTitleCont;
+            elContainer.appendChild(imgTitle);
+        } else {
+            elContainer.querySelector('#img-title').innerHTML = imgTitleCont;
+        }
+
+        if (2 <= imgArr.length) {
+            if (undefined == elContainer.querySelector('#prev-btn')) {
+                let prevBtn = document.createElement('span');
+                prevBtn.id = 'prev-btn';
+                prevBtn.title = 'Previous Image'
+                prevBtn.innerHTML = '<'
+                prevBtn.setAttribute('data-img-num', prevImg);
+                prevBtn.style = `color:rgba(0,0,0,1);border:1px solid rgba(0,0,0,1);font-size:20px;cursor:pointer;font-family:'Courier New', Courier, monospace;text-align:center;line-height: 1.1;margin-left:2px;margin-top:${(modalHtWd[0] - 25) / 2}px;width:20px;height:20px;float:left;z-index:100;`;
+                prevBtn.addEventListener('mouseover', e => e.target.style.boxShadow = '1px 1px 5px 1px rgba(0,0,0,1)')
+                prevBtn.addEventListener('mouseleave', e => e.target.style.boxShadow = '')
+                prevBtn.addEventListener('click', e => this.loadImg(overlayEl, closeBtn, elContainer, imgArr[parseInt(e.target.getAttribute('data-img-num'))], parseInt(e.target.getAttribute('data-img-num')), imgArr, [elContainer.offsetHeight, elContainer.offsetWidth]));
+                elContainer.appendChild(prevBtn)
+            } else {
+                elContainer.querySelector('#prev-btn').setAttribute('data-img-num', prevImg)
+            }
+
+            if (undefined == elContainer.querySelector('#next-btn')) {
+                let nextBtn = document.createElement('span');
+                nextBtn.id = 'next-btn';
+                nextBtn.innerHTML = '>'
+                nextBtn.title = 'Next Image'
+                nextBtn.style = `color:rgba(0,0,0,1);border:1px solid rgba(0,0,0,1);font-size:20px;cursor:pointer;font-family:'Courier New', Courier, monospace;text-align:center;line-height: 1.1;margin-right:2px;margin-top:${(modalHtWd[0] - 25) / 2}px;width:20px;height:20px;float:right;z-index:100;`;
+                nextBtn.setAttribute('data-img-num', nxtImg)
+                nextBtn.addEventListener('mouseover', e => e.target.style.boxShadow = '1px 1px 5px 1px rgba(0,0,0,1)')
+                nextBtn.addEventListener('mouseleave', e => e.target.style.boxShadow = '')
+                nextBtn.addEventListener('click', e => this.loadImg(overlayEl, closeBtn, elContainer, imgArr[parseInt(e.target.getAttribute('data-img-num'))], parseInt(e.target.getAttribute('data-img-num')), imgArr, [elContainer.offsetHeight, elContainer.offsetWidth]));
+                elContainer.appendChild(nextBtn)
+            } else {
+                elContainer.querySelector('#next-btn').setAttribute('data-img-num', nxtImg);
+            }
+
+        }
+
+        if (undefined != elContainer.querySelector('img')) {
+            elContainer.removeChild(elContainer.querySelector('img'));
+        }
+
+        let loadingDivCir = elContainer.querySelector('#content-loading');
+
+        if (null == loadingDivCir) {
+
+            loadingDivCir = document.createElement('div');
+            loadingDivCir.id = `img-loading`;
+            loadingDivCir.style = `display:inline-block;float:left;position:relative;margin-left:${(window.innerWidth - 46) / 2}px;margin-top:${(window.innerHeight - 46) / 2}px;height:40px;width:40px;border-radius:50%;border-color:rgba(255,255,255,1);border-style: solid; border-width: 3px;z-index:1100; `;
+            loadingDivCir.setAttribute('data-wait', 'left');
+            overlayEl.appendChild(loadingDivCir);
+
+            var loadingInt = setInterval(() => {
+                switch (loadingDivCir.getAttribute('data-wait')) {
+                    case 'left':
+                        loadingDivCir.setAttribute('data-wait', 'top');
+                        loadingDivCir.style.borderColor = 'rgba(255,255,255,1)';
+                        loadingDivCir.style.borderTop = '3px solid  rgba(0,0,0,1)';
+                        break;
+                    case 'top':
+                        loadingDivCir.setAttribute('data-wait', 'right');
+                        loadingDivCir.style.borderColor = 'rgba(255,255,255,1)';
+                        loadingDivCir.style.borderRight = '3px solid  rgba(0,0,0,1)';
+                        break;
+                    case 'right':
+                        loadingDivCir.setAttribute('data-wait', 'bottom');
+                        loadingDivCir.style.borderColor = 'rgba(255,255,255,1)';
+                        loadingDivCir.style.borderBottom = '3px solid  rgba(0,0,0,1)';
+
+                        break;
+                    case 'bottom':
+                        loadingDivCir.setAttribute('data-wait', 'left');
+                        loadingDivCir.style.borderColor = 'rgba(255,255,255,1)';
+                        loadingDivCir.style.borderLeft = '3px solid  rgba(0,0,0,1)';
+                        break;
+                }
+
+            }, 400);
+        }
+
+        imgToload.addEventListener('load', e => {
+            overlayEl.removeChild(loadingDivCir);
+            clearInterval(loadingInt);
+            closeBtn.style.display = '';
+            elContainer.style.display = '';
+            let optImgDim = this.getOptimizedElSize((modalHtWd[1] - 60), (modalHtWd[0] - 60), e.target.width, e.target.height, 1)
+            let contMargLeft = 1 < imgArr.length ? ((modalHtWd[1] - optImgDim.width) / 2) - 26 : (modalHtWd[1] - optImgDim.width) / 2;
+            e.target.id = `js-overlay-img`;
+            e.target.style = `position:relative;border:1px solid rgba(0,0,0,1);float:left;height:${optImgDim.height}px;width:${optImgDim.width}px;margin-left:${contMargLeft}px;margin-top:${(modalHtWd[0] - optImgDim.height) / 2}px;`;
+            elContainer.appendChild(e.target);
+
+        });
+
+    }
+
+    /** 
+    *Optimize el dimension for viewing 
+    * 
+    *@param scrnWd Maximum width available
+    *@param scrnHt Maximum height available
+    *@param elActWd Original width of el
+    *@param elActHt Original height of el
+    *@param alwdMargPrcnt Optional allowed container percent
+    *
+    */
+
+    getOptimizedElSize(scrnWd, scrnHt, elActWd, elActHt, alwdElPrcnt) {
+
+        let elScrnHtRatio = 0, elScrnWdRatio = 0, optElHt = 0, optElWd = 0;
+        let elPrcnt = undefined != alwdElPrcnt ? alwdElPrcnt : 0.89;
+        let margPrcnt = 1 - elPrcnt;
+        if ((elActWd >= scrnWd) && (elActHt >= scrnHt)) {
+            if (elActWd >= elActHt) {
+                if (elActWd > elActHt) {
+                    elScrnWdRatio = elActWd / scrnWd;
+                    optElWd = (elActWd / elScrnWdRatio) - (margPrcnt * scrnWd);
+                    optElHt = elActHt * (optElWd / elActWd);
+                    if (optElHt >= (elPrcnt * scrnHt)) {
+                        elScrnHtRatio = scrnHt / elActHt;
+                        optElHt = elActHt * elScrnHtRatio - (margPrcnt * scrnHt);
+                        optElWd = elActWd * (optElHt / elActHt);
+                    }
+                } else {
+                    if (scrnWd > scrnHt) {
+                        optElHt = (elPrcnt * scrnHt);
+                        optElWd = optElHt;
+                    } else if (scrnHt > scrnWd) {
+                        optElWd = (elPrcnt * scrnWd);
+                        optElHt = optElWd;
+                    } else {
+                        elScrnHtRatio = scrnHt / elActHt;
+                        optElHt = elActHt * elScrnHtRatio - (margPrcnt * scrnHt);
+                        optElWd = elActWd * (optElHt / elActHt);
+                    }
+                }
+            } else {
+                elScrnHtRatio = elActHt / scrnHt;
+                optElHt = (elActHt / elScrnHtRatio) - (margPrcnt * scrnHt);
+                optElWd = elActWd * (optElHt / elActHt);
+            }
+
+        } else if (elActWd >= scrnWd && elActHt < scrnHt) {
+            elScrnWdRatio = scrnWd / elActWd;
+            optElWd = elActWd * elScrnWdRatio - (margPrcnt * scrnWd);
+            optElHt = elActHt * (optElWd / elActWd);
+        } else if (elActHt >= scrnHt && elActWd < scrnWd) {
+            elScrnHtRatio = scrnHt / elActHt;
+            optElHt = elActHt * elScrnHtRatio - (margPrcnt * scrnHt);
+            optElWd = elActWd * (optElHt / elActHt);
+            optElHt = elActHt * (optElWd / elActWd);
+        } else {
+            let avlElWd = elPrcnt * scrnWd;
+            let avlElHt = elPrcnt * scrnHt;
+            if (elActWd >= avlElWd && elActHt >= avlElHt) {
+                let elAvlWdRatio = avlElWd / elActWd;
+                let elAvlHtRatio = avlElHt / elActHt;
+                optElWd = avlElWd * elAvlWdRatio;
+                optElHt = scrnHt * elScrnHtRatio;
+            } else if (elActWd >= avlElWd && elActHt < avlElHt) {
+                let elAvlWdRatio = avlElWd / elActWd;
+                optElWd = elActWd * elAvlWdRatio;
+                optElHt = elActHt * (optElWd / elActWd);
+            } else if (elActHt >= avlElHt && elActWd < avlElWd) {
+                let elAvlHtRatio = avlElHt / elActHt;
+                optElHt = elActHt * elAvlHtRatio;
+                optElWd = elActWd * (optElHt / elActHt);
+            } else {
+                optElWd = elActWd;
+                optElHt = elActHt;
+            }
+            optElHt = elActHt * (optElWd / elActWd);
+        }
+        //at last check itopt width is still large			
+        if (optElWd > (elPrcnt * scrnWd)) {
+            optElWd = elPrcnt * scrnWd;
+            optElHt = elActHt * (optElWd / elActWd);
+        }
+        return {
+            width: optElWd,
+            height: optElHt
+        };
+    }
+}
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+/*!*************************!*\
+  !*** ./src/frontend.js ***!
+  \*************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var js_overlay__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! js-overlay */ "./node_modules/js-overlay/js-overlay.js");
+
+window.addEventListener('DOMContentLoaded', () => {
+  const overlay = new js_overlay__WEBPACK_IMPORTED_MODULE_0__.jsOverlay();
+  let ratingDiv = document.querySelector('.ctcItemRating');
+  let ctcRating = JSON.parse(ratingDiv.getAttribute('data-ctcr-param'));
+
+  /**
+   * Script to handle user rating
+   */
+
+  /**
+   * Ajax rate post
+   *
+   * @param {*} clickeEl
+   */
+  const ratePost = clickeEl => {
+    let postId = clickeEl.getAttribute('data-type-id');
+    let dataToSend = 'action=ctcUserRating&rating_data=' + JSON.stringify({
+      postId: postId,
+      ratingType: clickeEl.getAttribute('data-type-rating')
+    });
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('POST', ctcRating.ctcRatingAjaxUrl, true);
+    xhttp.responseType = 'text';
+    xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
+    xhttp.addEventListener('load', e => {
+      if (e.target.status >= 200 && e.target.status < 400) {
+        if ('notLoggedIn' == e.target.response) {
+          alert(ctcRating.notLoggedIn);
+        } else {
+          ctcUpdateRating(e.target.response, postId, clickeEl);
+        }
+      } else {
+        return false;
+      }
+    });
+    xhttp.send(dataToSend);
+  };
+
+  /**
+   * update Rating based on server response
+   * @param serverResponse Response from server
+   * @param postId Post Id
+   * @param clickedEl Clicked element
+   */
+  const ctcUpdateRating = (serverResponse, postId, clickedEl) => {
+    let scenario = clickedEl.getAttribute('data-type-scenario');
+    let otherRating;
+    switch (serverResponse) {
+      case 'thumbsUp':
+        clickedEl.title = ctcRating.alreadyThumbedUp;
+        clickedEl.classList.remove('ctcThumbDown');
+        clickedEl.classList.add('ctcUserThumbUp');
+        ctcCalcUpDown(postId, 'thumbsUp');
+        break;
+      case 'thumbsDown':
+        clickedEl.title = ctcRating.alreadyThumbedDown;
+        clickedEl.classList.remove('ctcThumbUp');
+        clickedEl.classList.add('ctcUserThumbDown');
+        clickedEl.style.fontSize = '25px';
+        ctcCalcUpDown(postId, 'thumbsDown');
+        break;
+      case 'thumbsUpReversed':
+        clickedEl.title = ctcRating.alreadyThumbedDown;
+        clickedEl.classList.add('ctcUserThumbDown');
+        clickedEl.style.fontSize = '25px';
+        otherRating = document.querySelector('#ctcThumbUp-' + postId);
+        otherRating.title = ctcRating.thumbUp;
+        otherRating.classList.remove('ctcUserThumbUp');
+        otherRating.classList.add('ctcThumbUp');
+        otherRating.style.fontSize = '20px';
+        ctcCalcUpDown(postId, 'thumbsUpReversed');
+        break;
+      case 'thumbsDownReversed':
+        clickedEl.title = ctcRating.alreadyThumbedUp;
+        clickedEl.classList.remove('ctcThumbUp');
+        clickedEl.classList.add('ctcUserThumbUp');
+        clickedEl.style.fontSize = '25px';
+        otherRating = document.querySelector('#ctcThumbDown-' + postId);
+        otherRating.title = ctcRating.thumbDown;
+        otherRating.classList.remove('ctcUserThumbDown');
+        otherRating.classList.add('ctcThumbDown');
+        otherRating.style.fontSize = '20px';
+        ctcCalcUpDown(postId, 'thumbsDownReversed', scenario);
+        break;
+      case 'unThumbsUp':
+        clickedEl.title = ctcRating.thumbUp;
+        clickedEl.classList.remove('ctcUserThumbUp');
+        clickedEl.classList.add('ctcThumbUp');
+        clickedEl.style.fontSize = '20px';
+        ctcCalcUpDown(postId, 'unThumbsUp');
+        break;
+      case 'unThumbsDown':
+        clickedEl.title = ctcRating.thumbDown;
+        clickedEl.classList.remove('ctcUserThumbDown');
+        clickedEl.classList.add('ctcThumbDown');
+        clickedEl.style.fontSize = '20px';
+        ctcCalcUpDown(postId, 'unThumbsDown');
+        break;
+    }
+  };
+
+  /**
+   * add substract thumup and thumbdown based on server respose
+   *
+   * @param postId Post id
+   * @param action type of action to be carried out
+   */
+  const ctcCalcUpDown = (postId, action) => {
+    let ratingUpElem, ratingDownElem, ctcNewThumbsUpCount, ctcNewThumbsDownCount;
+    switch (action) {
+      case 'thumbsUp':
+        ratingUpElem = document.querySelector('#ctcThumbUpCount-' + postId);
+        ctcNewThumbsUpCount = parseInt(ratingUpElem.getAttribute('data-type-thumupcount')) + 1;
+        ratingUpElem.innerHTML = addCommas(ctcNewThumbsUpCount);
+        ratingUpElem.setAttribute('data-type-thumupcount', ctcNewThumbsUpCount);
+        break;
+      case 'thumbsDown':
+        ratingDownElem = document.querySelector('#ctcThumbDownCount-' + postId);
+        ctcNewThumbsDownCount = parseInt(ratingDownElem.getAttribute('data-type-thumdowncount')) + 1;
+        ratingDownElem.innerHTML = addCommas(ctcNewThumbsDownCount);
+        ratingDownElem.setAttribute('data-type-thumdowncount', ctcNewThumbsDownCount);
+        break;
+      case 'thumbsUpReversed':
+        ratingUpElem = document.querySelector('#ctcThumbUpCount-' + postId);
+        ratingDownElem = document.querySelector('#ctcThumbDownCount-' + postId);
+        ctcNewThumbsUpCount = parseInt(ratingUpElem.getAttribute('data-type-thumupcount')) - 1;
+        ctcNewThumbsDownCount = parseInt(ratingDownElem.getAttribute('data-type-thumdowncount')) + 1;
+        ratingUpElem.innerHTML = addCommas(ctcNewThumbsUpCount);
+        ratingUpElem.setAttribute('data-type-thumupcount', ctcNewThumbsUpCount);
+        ratingDownElem.innerHTML = addCommas(ctcNewThumbsDownCount);
+        ratingDownElem.setAttribute('data-type-thumdowncount', ctcNewThumbsDownCount);
+        break;
+      case 'thumbsDownReversed':
+        ratingUpElem = document.querySelector('#ctcThumbUpCount-' + postId);
+        ratingDownElem = document.querySelector('#ctcThumbDownCount-' + postId);
+        ctcNewThumbsUpCount = parseInt(ratingUpElem.getAttribute('data-type-thumupcount')) + 1;
+        ctcNewThumbsDownCount = parseInt(ratingDownElem.getAttribute('data-type-thumdowncount')) - 1;
+        ratingUpElem.innerHTML = addCommas(ctcNewThumbsUpCount);
+        ratingUpElem.setAttribute('data-type-thumupcount', ctcNewThumbsUpCount);
+        ratingDownElem.innerHTML = addCommas(ctcNewThumbsDownCount);
+        ratingDownElem.setAttribute('data-type-thumdowncount', ctcNewThumbsDownCount);
+        break;
+      case 'unThumbsUp':
+        ratingUpElem = document.querySelector('#ctcThumbUpCount-' + postId);
+        ctcNewThumbsUpCount = parseInt(ratingUpElem.getAttribute('data-type-thumupcount')) - 1;
+        ratingUpElem.innerHTML = addCommas(ctcNewThumbsUpCount);
+        ratingUpElem.setAttribute('data-type-thumupcount', ctcNewThumbsUpCount);
+        break;
+      case 'unThumbsDown':
+        ratingDownElem = document.querySelector('#ctcThumbDownCount-' + postId);
+        ctcNewThumbsDownCount = parseInt(ratingDownElem.getAttribute('data-type-thumdowncount')) - 1;
+        ratingDownElem.innerHTML = addCommas(ctcNewThumbsDownCount);
+        ratingDownElem.setAttribute('data-type-thumdowncount', ctcNewThumbsDownCount);
+        break;
+    }
+  };
+
+  /**
+   * number format
+   *
+   * @param nStr number to be formatted
+   * @returns formatted number
+   */
+  const addCommas = nStr => {
+    let x = [];
+    let x1 = '';
+    let x2 = '';
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+      x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+  };
+  let ratingArr = Array.from(document.querySelectorAll(['.ctcThumbUp', '.ctcThumbDown', '.ctcUserThumbUp', '.ctcUserThumbDown']));
+  ratingArr.map(x => x.addEventListener('click', e => ratePost(e.target)));
+
+  /**
+   *
+   * Script to display user who liked or disliked post
+   */
+
+  /**
+   * Get users based on stat
+   * @param elClicked Clicked stat display
+   */
+
+  const ctcDisplayUsers = elClicked => {
+    overlay.createOverlay({
+      ajaxUrl: ctcRating.ctcRatingAjaxUrl,
+      ajaxData: 'action=ctcGetUsers&post_id=' + elClicked.getAttribute('data-post-id') + '&user_to_get=' + elClicked.getAttribute('data-get'),
+      ajaxMethod: 'POST',
+      containerHt: 350,
+      containerWd: 200
+    });
+  };
+
+  /**
+   * Display users who rated post
+   *
+   */
+  let statArr = Array.from(document.querySelectorAll('.ctcThumbsUpStat,.ctcThumbsDownStat'));
+  statArr.map(x => x.addEventListener('click', e => {
+    let dataStatCount = 'thumb-up-count' == e.target.getAttribute('data-get') ? e.target.getAttribute('data-type-thumupcount') : e.target.getAttribute('data-type-thumdowncount');
+    if ('0' != dataStatCount) {
+      ctcDisplayUsers(e.target);
+    }
+  }));
+});
+/******/ })()
+;
+//# sourceMappingURL=frontend.js.map

@@ -1,6 +1,6 @@
 {
 	"name": "ctc-rating",
-	"version": "1.7.0",
+	"version": "1.8.0",
 	"description": "Block to let user Thum up or thumb down post",
 	"author": "UjW0L",
 	"license": "GPL-2.0-or-later",

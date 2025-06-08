@@ -15,7 +15,7 @@
 		"start": "wp-scripts start"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^26.19.0"
+		"@wordpress/scripts": "^30.17.0"
 	},
 	"dependencies": {
 		"@wordpress/server-side-render": "^5.0.0",
